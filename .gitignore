@@ -41,10 +41,6 @@ coverage/
 *.bak
 *.pid
 
-# Static files
-public/static/
-public/assets/
-
 # npm cache directory
 .npm/
 
