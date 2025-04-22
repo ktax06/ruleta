@@ -1,0 +1,14 @@
+{
+    "items": [
+        {"id": 1, "name": "Banana", "htmlContent": "Banana", "textColor": "", "background": ""},
+        {"id": 2, "name": "Apple", "htmlContent": "Apple", "textColor": "", "background": ""},
+        {"id": 3, "name": "Orange and Purple", "htmlContent": "Orange<br>and Purple", "textColor": "", "background": ""},
+        {"id": 4, "name": "Cherry", "htmlContent": "Cherry", "textColor": "", "background": ""},
+        {"id": 5, "name": "Grape", "htmlContent": "Grape", "textColor": "", "background": ""},
+        {"id": 6, "name": "Lemon", "htmlContent": "Lemon", "textColor": "", "background": ""},
+        {"id": 7, "name": "Peach", "htmlContent": "Peach", "textColor": "", "background": ""},
+        {"id": 8, "name": "Pineapple", "htmlContent": "Pineapple", "textColor": "", "background": ""},
+        {"id": 9, "name": "Strawberry", "htmlContent": "Strawberry", "textColor": "", "background": ""},
+        {"id": 10, "name": "Watermelon", "htmlContent": "Watermelon", "textColor": "", "background": ""}
+    ]
+}

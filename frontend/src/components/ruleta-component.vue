@@ -1,39 +1,70 @@
 <template>
-    <Roulette ref="wheel" :items="items" @click="launchWheel" />
-  </template>
-  
-  <script>
-  import { Roulette } from "vue3-roulette";
-  export default {
+    <Roulette 
+    @click="launchWheel" 
+    @wheel-start="wheelStartedCallback"
+    @wheel-end="wheelEndedCallback"
+    ref="wheel" 
+    :items="items" 
+    :size="400"
+    :result-variation="0" 
+    :base-display="true"
+    :base-background="'#EEAA33'" 
+    :display-shadow="true"
+    :duration="5"
+    :horizontal-content="true"
+    :counter-clockwise="true"
+    :centered-indicator="true"
+    >
+        <template #baseContent>
+            <strong>Iniciar</strong>
+        </template>
+    </Roulette>
+</template>
+
+<script>
+import { Roulette } from "vue3-roulette";
+import constants from "@/assets/constants.json";
+
+export default {
     name: "RuletaComponent",
     components: {
-      Roulette,
+        Roulette,
     },
     data() {
-    return {
-      items: [
-        {id: 1, name: "Banana", htmlContent: "Banana", textColor: "", background: "",},
-        {id: 2, name: "Apple", htmlContent: "Apple", textColor: "", background: "",},
-        {id: 3, name: "Orange and Purple", htmlContent: "Orange<br>and Purple", textColor: "", background: "",},
-        {id: 4, name: "Cherry", htmlContent: "Cherry", textColor: "", background: "",},
-      ],
-    };
-  },
-  methods: {
-    launchWheel() {
-      this.$refs.wheel.launchWheel();
+        return {
+            items: this.getItems(),
+            wheelStartedCallback: () => {
+                console.log("Ruleta iniciada");
+            },
+            wheelEndedCallback: (resultIndex) => {
+                if (resultIndex !== null) {
+                    alert(`El resultado es: ${resultIndex.name}`);
+                } else {
+                    alert("Ya se puede volver a girar");
+                }
+
+                this.$refs.wheel.reset();
+            },
+        };
     },
-  },
+    methods: {
+        launchWheel() {
+            this.$refs.wheel.launchWheel();
+        },
+        getItems() {
+            return constants.items;
+        },
+    },
 };
 </script>
-  
+
 <style>
 #app {
-font-family: Avenir, Helvetica, Arial, sans-serif;
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
-text-align: center;
-color: #2c3e50;
-margin-top: 60px;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
 }
 </style>
