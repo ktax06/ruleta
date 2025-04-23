@@ -1,18 +1,29 @@
 <template>
   <div>
-    <h1>Ruleta 2.0</h1>
-    <p>Bienvenido a la ruleta 2.0</p>
-    <RuletaComponent></RuletaComponent>
+    <h1>Ruleta</h1>
+    <div v-if="!alumnos || !incidencias">
+      <p>No se proporcionaron datos. Redirigiendo...</p>
+    </div>
   </div>
 </template>
 
 <script>
-import RuletaComponent from '@/components/ruleta-component.vue';
-
 export default {
   name: 'RuletePage',
-  components: {
-    RuletaComponent,
-  }
+  data() {
+    return {
+      alumnos: null,
+      incidencias: null,
+    };
+  },
+  created() {
+    const query = this.$route.query;
+    if (query.alumnos && query.incidencias) {
+      this.alumnos = JSON.parse(decodeURIComponent(query.alumnos));
+      this.incidencias = JSON.parse(decodeURIComponent(query.incidencias));
+    } else {
+      this.$router.push('/');
+    }
+  },
 };
-</script> 
+</script>
