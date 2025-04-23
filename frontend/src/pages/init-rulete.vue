@@ -179,7 +179,7 @@ export default {
                 categorias.push({
                   id: categorias.length + 1,
                   name: categoria,
-                  htmlcontent: `${categoria} ${observacion}`,
+                  htmlContent: `${categoria}`,
                   textColor: '',
                   background: '',
                 });
@@ -193,7 +193,7 @@ export default {
               incidencias[key].push({
                 id: incidencias[key].length + 1,
                 name: incidencia,
-                htmlcontent: `${incidencia} ${observacion}`,
+                htmlContent: `${incidencia} ${observacion}`,
                 textColor: '',
                 background: '',
               });

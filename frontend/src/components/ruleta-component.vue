@@ -23,12 +23,21 @@
 
 <script>
 import { Roulette } from "vue3-roulette";
-import constants from "@/assets/constants.json";
 
 export default {
     name: "RuletaComponent",
     components: {
         Roulette,
+    },
+    props: {
+        alumnos: {
+            type: Array,
+            required: true,
+        },
+        incidencias: {
+            type: Array,
+            required: true,
+        },
     },
     data() {
         return {
@@ -52,7 +61,7 @@ export default {
             this.$refs.wheel.launchWheel();
         },
         getItems() {
-            return constants.items;
+            return this.incidencias.categorias;
         },
     },
 };

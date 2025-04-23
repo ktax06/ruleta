@@ -1,15 +1,23 @@
 <template>
   <div>
-    <h1>Ruleta</h1>
+    <h1 class="mb-5">Ruleta 2.0</h1>
     <div v-if="!alumnos || !incidencias">
       <p>No se proporcionaron datos. Redirigiendo...</p>
+    </div>
+    <div v-else>
+      <RuletaComponent :alumnos="alumnos" :incidencias="incidencias"></RuletaComponent>
     </div>
   </div>
 </template>
 
 <script>
+import RuletaComponent from '@/components/ruleta-component.vue';
+
 export default {
   name: 'RuletePage',
+  components: {
+    RuletaComponent,
+  },
   data() {
     return {
       alumnos: null,
@@ -26,4 +34,4 @@ export default {
     }
   },
 };
-</script>
+</script> 
