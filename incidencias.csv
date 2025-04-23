@@ -1,0 +1,26 @@
+Categoria,Incidencia,Observacion,Carga
+Organizacional,Cambia a JP/SM,7 días
+Organizacional,Cambia de proyecto principal,7 días
+Organizacional,Cambia de tablero kanban,7 días
+Organizacional,Cambia de horario de trabajo,7 días
+Organizacional,Cambia de planificación,7 días
+Operativo,Error en el sistema,profesor
+Operativo,Error en la planificación,7 días atraso
+Operativo,Error de hardware,7 días Sin equipo
+Operativo,Error de comunicación,7 días sin discord
+Operativo,Error de equipo,profesor
+Tecnológico,Actualizar librerías/api a última versión,
+Tecnológico,Cambiar el IDE de desarrollo,
+Tecnológico,Explora implementación alternativa,
+Tecnológico,Cambia de librería/api de desarrollo,
+Tecnológico,Cambia de entorno de desarrollo (Linux/Windows/mac/Android/Apple),
+Proyecto,Desarrollador con licencia,7 días
+Proyecto,Cambiar el horario de reunión,7 días
+Proyecto,Intercambia un desarrollador(a) a otro proyecto,7 días
+Proyecto,Priorizar un solo proyecto,7 días
+Proyecto,Grupo en congeladora,7 días
+Personal,Desarrollador con actividad personal,7 días
+Personal,Desarrollador genera conflicto grupal,profesor
+Personal,Desarrollador prioriza tareas administrativas de proyecto,7 días
+Personal,Desarrollador genera malestar individual,profesor
+Personal,Solicita cambio de SM/JP,7 días
