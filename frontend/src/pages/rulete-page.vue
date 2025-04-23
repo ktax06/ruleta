@@ -10,7 +10,7 @@
 import RuletaComponent from '@/components/ruleta-component.vue';
 
 export default {
-  name: 'HomePage',
+  name: 'RuletePage',
   components: {
     RuletaComponent,
   }
