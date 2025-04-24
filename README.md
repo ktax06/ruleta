@@ -53,3 +53,39 @@ docker-compose down --remove-orphans && docker-compose up -d --build
 | HU10  | Como usuario, quiero ver estadísticas y gráficos que muestren de mejor manera el historial de sorteos de la ruleta. | Baja | Pendiente |
 | HU11  | Como usuario, quiero integrar esta ruleta con otras similares en una misma aplicación web. | Media | Pendiente |
 | HU12  | Como usuario, quiero personalizar aspectos estéticos de la ruleta como colores, aspecto, añadir imágenes, etc. | Baja | Pendiente |
+| HU13  | Como usuario, quiero ingresar los alumnos que participaran de cada sorteo. | Baja | Pendiente |
+| HU14  | Como usuario, quiero que el sistema me permita realizar un sorteo  para determinar que alumno es afectado en la incidencia. | Baja | Pendiente |
+
+## Modelo de datos
+El modelo de datos se basa en una base de datos relacional, utilizando PostgreSQL como sistema de gestión de bases de datos. A continuación se presenta el esquema de la base de datos, en este caso se utiliza una base de datos relacional con el objetivo de permitir la escalabilidad en el sistema, pero inicialmente nuestro modelo no es relacional:
+
+```mermaid
+erDiagram
+    SORTEO {
+        id SERIAL PRIMARY KEY
+        fecha TIMESTAMP
+        categoria VARCHAR(255) 
+        incidencia VARCHAR(255) 
+        grupo VARCHAR(255) 
+        alumno VARCHAR(255) 
+        mensaje TEXT
+    }
+
+```
+
+## Arquitectura
+La arquitectura del sistema se basa en una aplicación web de tipo cliente-servidor, donde el cliente accede a la aplicación mediante un navegador web haciendo uso de la nube, la apliación esá construida dentro de un docker compose que corre 4 servicios que comparten la misma red, estos son:
+- **Backend**: Implementado en Python utilizando el framework Flask, encargado de gestionar la lógica de negocio y la comunicación con la base de datos.
+- **Frontend**: Implementado en Vue3, encargado de gestionar la interfaz de usuario y la comunicación con el backend.
+- **Base de datos**: Implementada en PostgreSQL, encargada de almacenar la información del sistema.
+- **Nginx**: Servidor web encargado de gestionar las peticiones HTTP, operando como proxy inverso entre el cliente y el backend.
+
+```mermaid
+graph TD
+    A[Cliente] -->|HTTP| B[Nube]
+    B -->|HTTP| C[Backend]
+    C -->|SQL| D[Base de datos]
+    B -->|HTTP| E[Frontend]
+```
+
+
