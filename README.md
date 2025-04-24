@@ -82,10 +82,14 @@ La arquitectura del sistema se basa en una aplicación web de tipo cliente-servi
 
 ```mermaid
 graph TD
-    A[Cliente] -->|HTTP| B[Nube]
-    B -->|HTTP| C[Backend]
-    C -->|SQL| D[Base de datos]
-    B -->|HTTP| E[Frontend]
+    A[Cliente] -->|HTTP| B[Nginx: Proxy inverso]
+    B -->|HTTP| C[Backend: Flask]
+    C -->|SQL| D[Base de datos: PostgreSQL]
+    B -->|HTTP| E[Frontend: Vue3]
+    E -->|HTTP| B
+    D -->|SQL| C
+    C -->|SQL| B
+    B -->|HTTP| A
 ```
 
 
