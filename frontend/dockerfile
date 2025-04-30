@@ -2,7 +2,7 @@ FROM node:16-slim
 
 WORKDIR /app
 
-COPY ./ruleta /app
+COPY . /app
 
 RUN npm install
 
