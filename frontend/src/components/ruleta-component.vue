@@ -18,12 +18,22 @@
             <strong>Iniciar</strong>
         </template>
     </Roulette>
-    <div v-if="showDialog" class="dialog-overlay">
+    <div v-if="showDialogCat" class="dialog-overlay">
       <div class="dialog">
-        <h3>¡Ganador: {{ lastWinner }}!</h3>
+        <h3>¡Categoría ganadora: {{ lastWinner }}!</h3>
         <div class="dialog-buttons">
-          <button v-if="primeraRuleta" @click="girarIncidencias">Girar ruleta con incidencias</button>
-          <button v-if="existenAlumnos" @click="girarAlumnos">Girar ruleta con alumnos</button>
+          <button @click="girarIncidencias">Girar ruleta con incidencias</button>
+          <button @click="reiniciar">Reinciar categorias</button>
+        </div>
+      </div>
+    </div>
+    <div v-if="showDialogInc" class="dialog-overlay">
+      <div class="dialog">
+        <h3>¡Incidencia ganadora: {{ lastWinner }}!</h3>
+        <label for="comentario">Deja tu comentario:</label>
+        <textarea id="comentario" rows="3" v-model="comentario" placeholder="Escribe tu comentario aqui..."></textarea>
+        <div class="dialog-buttons">
+          <button @click="girarAlumnos">Girar ruleta con alumnos</button>
           <button @click="reiniciar">Reinciar categorias</button>
         </div>
       </div>
@@ -50,10 +60,12 @@ export default {
     },
     data() {
         return {
+            comentario: "",
             primeraRuleta: true,
             existenAlumnos: false,
             lastWinner: null,
-            showDialog: false,
+            showDialogCat: false,
+            showDialogInc: false,
             items: this.getCategorias(),
             wheelStartedCallback: () => {
                 console.log("Ruleta iniciada");
@@ -61,7 +73,11 @@ export default {
             wheelEndedCallback: (resultIndex) => {
                 if (resultIndex !== null) {
                     this.lastWinner = resultIndex.name;
-                    this.showDialog = true;
+                    if (this.primeraRuleta) {
+                        this.showDialogCat = true;
+                    } else {
+                        this.showDialogInc = true;
+                    }
                 }
                 this.$refs.wheel.reset();
             },
@@ -84,15 +100,26 @@ export default {
         girarIncidencias() {
             this.primeraRuleta = false;
             this.items = this.getIncidencias(this.lastWinner);
-            this.showDialog = false;
+            this.showDialogCat = false;
         },
         reiniciar() {
+            this.subirDatos();
             this.primeraRuleta = true;
             this.items = this.getCategorias();
-            this.showDialog = false;
+            this.showDialogCat = false;
+            this.showDialogInc = false;
+            this.lastWinner = null;
+            this.comentario = "";
         },
         girarAlumnos() {
             console.log("Girar ruleta con alumnos");
+            //mientras no se implemente la ruleta de alumnos, se reinicia la ruleta de categorias
+            this.reiniciar();
+        },
+        subirDatos() {
+            // Implementar la lógica para subir los datos al servidor
+            console.log("Comentario:", this.comentario);
+            // Aquí puedes hacer una llamada a la API para enviar el comentario
         },
     },
 };
