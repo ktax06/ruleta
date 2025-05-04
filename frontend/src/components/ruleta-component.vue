@@ -18,6 +18,16 @@
             <strong>Iniciar</strong>
         </template>
     </Roulette>
+    <div v-if="showDialog" class="dialog-overlay">
+      <div class="dialog">
+        <h3>¡Ganador: {{ lastWinner }}!</h3>
+        <div class="dialog-buttons">
+          <button v-if="primeraRuleta" @click="girarIncidencias">Girar ruleta con incidencias</button>
+          <button v-if="existenAlumnos" @click="girarAlumnos">Girar ruleta con alumnos</button>
+          <button @click="reiniciar">Reinciar categorias</button>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -40,17 +50,18 @@ export default {
     },
     data() {
         return {
+            primeraRuleta: true,
+            existenAlumnos: false,
+            lastWinner: null,
+            showDialog: false,
             items: this.getCategorias(),
             wheelStartedCallback: () => {
                 console.log("Ruleta iniciada");
             },
             wheelEndedCallback: (resultIndex) => {
                 if (resultIndex !== null) {
-                    alert(`El resultado es: ${resultIndex.name}`);
-                    console.log(this.items);
-                    this.items = this.getIncidencias(resultIndex.name);
-                } else {
-                    alert("Ya se puede volver a girar");
+                    this.lastWinner = resultIndex.name;
+                    this.showDialog = true;
                 }
                 this.$refs.wheel.reset();
             },
@@ -64,14 +75,25 @@ export default {
             return this.incidencias.categorias;
         },
         getIncidencias(categoria) {
-            if (!this.incidencias) { // Si no existe el objeto incidencias
-                console.error("No se han proporcionado incidencias.");
-                return []; // Retorna un array vacío para evitar errores
+            if (!this.incidencias) {
+                return [];
             }
             const propiedad = "incidencias_" + categoria;
-            console.log(propiedad);
-            return this.incidencias[propiedad] || []; // Si no existe, retorna array vacío
-        }
+            return this.incidencias[propiedad] || [];
+        },
+        girarIncidencias() {
+            this.primeraRuleta = false;
+            this.items = this.getIncidencias(this.lastWinner);
+            this.showDialog = false;
+        },
+        reiniciar() {
+            this.primeraRuleta = true;
+            this.items = this.getCategorias();
+            this.showDialog = false;
+        },
+        girarAlumnos() {
+            console.log("Girar ruleta con alumnos");
+        },
     },
 };
 </script>
@@ -84,5 +106,28 @@ export default {
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+}
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dialog {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+}
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
 }
 </style>
