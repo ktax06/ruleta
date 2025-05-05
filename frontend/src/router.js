@@ -12,4 +12,10 @@ const router = createRouter({
   routes
 });
 
+router.afterEach((to) => {
+  const defaultTitle = 'Ruleta 2.0'; // Título predeterminado
+  document.title = to.meta.title || defaultTitle;
+});
+
+
 export default router;
