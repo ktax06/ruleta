@@ -28,7 +28,7 @@
             <h3>¡Categoría ganadora: {{ lastWinner }}!</h3>
             <div class="dialog-buttons">
               <button @click="girarIncidencias">Girar ruleta con incidencias</button>
-              <button @click="reiniciar">Reinciar categorias</button>
+              <button @click="reiniciar">Reiniciar categorias</button>
             </div>
           </div>
         </div>
