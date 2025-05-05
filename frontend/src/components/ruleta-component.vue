@@ -1,7 +1,7 @@
 <template>
     <div class="row px-5">
       <!-- Columna de la ruleta -->
-      <div class="col-lg-6 mb-4">
+      <div class="col-lg-6 mb-4 position-relative">
         <Roulette 
           @click="launchWheel" 
           @wheel-start="wheelStartedCallback"
@@ -231,6 +231,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 .dialog {
   background: white;
