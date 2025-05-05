@@ -74,7 +74,7 @@ erDiagram
 ```
 
 ## Arquitectura
-La arquitectura del sistema se basa en una aplicación web de tipo cliente-servidor, donde el cliente accede a la aplicación mediante un navegador web haciendo uso de la nube, la apliación esá construida dentro de un docker compose que corre 4 servicios que comparten la misma red, estos son:
+La arquitectura del sistema se basa en una aplicación web de tipo cliente-servidor, donde el cliente accede a la aplicación mediante un navegador web haciendo uso de la nube, la aplicación está construida dentro de un docker compose que corre 4 servicios que comparten la misma red, estos son:
 - **Backend**: Implementado en Python utilizando el framework Flask, encargado de gestionar la lógica de negocio y la comunicación con la base de datos.
 - **Frontend**: Implementado en Vue3, encargado de gestionar la interfaz de usuario y la comunicación con el backend.
 - **Base de datos**: Implementada en PostgreSQL, encargada de almacenar la información del sistema.
