@@ -5,10 +5,11 @@
     @wheel-end="wheelEndedCallback" 
     ref="wheel"
     :items="items" 
-    :size="400" 
+    :size="500" 
     :result-variation="0" 
     :base-display="true" 
     :base-background="'#EEAA33'"
+    :reset-on-end="false"
     :display-shadow="true" 
     :duration="5" 
     :horizontal-content="true" 
@@ -30,8 +31,10 @@
     <div v-if="showDialogInc" class="dialog-overlay">
       <div class="dialog">
         <h3>¡Incidencia ganadora: {{ lastWinner }}!</h3>
-        <label for="comentario">Deja tu comentario:</label>
-        <textarea id="comentario" rows="3" v-model="comentario" placeholder="Escribe tu comentario aqui..."></textarea>
+        <div>
+          <label for="comentario">Deja tu comentario:</label>
+          <textarea id="comentario" rows="3" v-model="comentario" placeholder="Escribe tu comentario aqui..."></textarea>
+        </div>
         <div class="dialog-buttons">
           <button @click="girarAlumnos">Girar ruleta con alumnos</button>
           <button @click="reiniciar">Reinciar categorias</button>
@@ -156,5 +159,13 @@ export default {
   justify-content: flex-end;
   margin-top: 20px;
   gap: 10px;
+}
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 100px;
 }
 </style>
