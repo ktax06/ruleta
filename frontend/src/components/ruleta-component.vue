@@ -250,6 +250,10 @@ export default {
     },
     girarRuleta() {
       this.showDialogGrupo = false;
+      if (!this.grupoSeleccionado || !this.getGrupos().includes(this.grupoSeleccionado)) {
+        console.error("Error: No se ha seleccionado un grupo válido.");
+        return;
+      }
       console.log("Girar ruleta con grupo:", this.grupoSeleccionado);
       this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
       console.log("Alumnos del grupo:", this.alumnosGrupo);
