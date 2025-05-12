@@ -17,13 +17,14 @@ def subir_sorteo(datos_sorteo):
         )
         conn.commit()
         cur.close()
+        return "Sorteo subido correctamente"
     except (Exception, psycopg2.DatabaseError) as error:
         current_app.logger.error(f"Error al subir el sorteo: {error}")
         return None
     finally:
         if conn is not None:
             conn.close()
-        return "Sorteo subido correctamente"
+    return "Sorteo subido correctamente"
 
 def obtener_sorteos():
     conn = None
