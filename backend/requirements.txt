@@ -1,2 +1,4 @@
 Flask
 python-dotenv
+python-dotenv
+psycopg2-binary
