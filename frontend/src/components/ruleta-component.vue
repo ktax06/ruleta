@@ -241,7 +241,7 @@ export default {
       if (!this.alumnos) {
         return [];
       }
-      return Object.keys(this.alumnos.grupos.__v_raw || this.alumnos.grupos);
+      return Object.keys(toRaw(this.alumnos.grupos) || this.alumnos.grupos);
     },
     subirDatos() {
       // Implementar la lógica para subir los datos al servidor
