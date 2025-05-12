@@ -1,15 +1,7 @@
-from flask import Flask
+from app import create_app
 import os
 
-app = Flask(__name__)
-app.config.from_mapping(
-    SECRET_KEY=os.environ.get('SECRET_KEY', 'dev_key'),
-    DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-)
-
-@app.route('/')
-def hello():
-    return 'Hello, World!'
+app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
