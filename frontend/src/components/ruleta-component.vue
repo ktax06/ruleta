@@ -251,7 +251,7 @@ export default {
     },
     subirDatos() {
       // Lógica para subir los datos al servidor
-      var incidenciaValida = false;
+      let incidenciaValida = false;
       for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
         if (incidencia.name === this.lastWinner) {
           incidenciaValida = true;
