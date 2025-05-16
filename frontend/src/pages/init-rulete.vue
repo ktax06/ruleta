@@ -1,6 +1,6 @@
 <template>
-  <div class="container mt-5">
-    <div class="card shadow-lg">
+  <div class="container-fluid mt-5 px-5">
+    <div class="card mx-5">
       <div class="card-header bg-primary text-white">
         <h2 class="mb-0">
           <i class="bi bi-gear-fill"></i> Inicializar Ruleta
@@ -83,10 +83,14 @@
         </div>
       </div>
     </div>
+    <div class="row mx-5 my-5">
+      <TablaSorteos/>
+    </div>
   </div>
 </template>
 
 <script>
+import TablaSorteos from '@/components/tabla-sorteos.vue';
 import Papa from 'papaparse';
 export default {
   name: 'InitRulete',
@@ -99,6 +103,9 @@ export default {
       errorMessage: '',
       successMessage: '',
     };
+  },
+  components: {
+    TablaSorteos,
   },
   methods: {
     handleFileChange(type, event) {
