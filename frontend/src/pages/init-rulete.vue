@@ -543,7 +543,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .card {
   border-radius: 14px;
 }
