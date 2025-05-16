@@ -213,7 +213,7 @@ export default {
       this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
-      // Resetear todos los diálogoscd
+      // Resetear todos los diálogos
       this.showDialogCat = false;
       this.showDialogInc = false;
       this.showDialogAlumno = false;
