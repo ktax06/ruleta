@@ -88,37 +88,46 @@
     </div>
     <!-- Columna de la lista -->
     <div class="col-lg-6">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0 d-flex align-items-center">
-            <i class="bi bi-list me-2"></i> Items en la Ruleta
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-header bg-primary py-3">
+          <h5 class="mb-0 d-flex align-items-center text-white">
+            <i class="bi bi-list-task me-3 fs-4"></i>
+            Elementos de la Ruleta
           </h5>
         </div>
-        <div class="card-body">
-          <ul class="list-group">
-            <li v-for="(item, index) in items" :key="item.id"
-              class="list-group-item d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center flex-grow-1">
-                <!-- Input con diseño mejorado -->
-                <div class="input-group me-3">
-                  <span class="input-group-text bg-light">
-                    <i class="bi bi-pencil"></i>
-                  </span>
-                  <input type="text" class="form-control" v-model="item.htmlContent"
-                    @input="updateItem(index, item.htmlContent)" placeholder="Editar contenido" />
+        
+        <div class="card-body p-0">
+          <draggable 
+            v-model="items" 
+            class="list-group list-group-flush"
+            item-key="id"
+            @end="onDragEnd"
+          >
+            <template #item="{ element, index }">
+              <li class="list-group-item d-flex align-items-center px-4 py-3">
+                <div class="d-flex align-items-center flex-grow-1 gap-3">
+                  <button 
+                    class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
+                    @click="toggleVisibility(index)"
+                  >
+                    <i :class="element.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
+                  
+                  <input
+                    type="text"
+                    class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
+                    v-model="element.htmlContent"
+                    @input="updateItem(index, $event.target.value)"
+                    placeholder="Editar elemento"
+                  >
                 </div>
-                <!-- Botón de visibilidad -->
-                <button class="btn btn-sm btn-outline-secondary" @click="toggleVisibility(index)"
-                  title="Ocultar/Mostrar">
-                  <i class="bi" :class="item.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
-                </button>
-              </div>
-              <!-- Badge con diseño mejorado -->
-              <span class="badge bg-info text-dark">
-                <i class="bi bi-tag"></i> {{ item.name }}
-              </span>
-            </li>
-          </ul>
+                
+                <span class="badge rounded-pill bg-info bg-opacity-25 text-info">
+                  {{ element.name }}
+                </span>
+              </li>
+            </template>
+          </draggable>
         </div>
       </div>
     </div>
@@ -127,12 +136,14 @@
 
 <script>
 import { Roulette } from "vue3-roulette";
+import draggable from "vuedraggable";
 import { toRaw } from 'vue';
 
 export default {
   name: "RuletaComponent",
   components: {
     Roulette,
+    draggable,
   },
   props: {
     alumnos: {
