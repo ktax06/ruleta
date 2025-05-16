@@ -213,7 +213,7 @@ export default {
       this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
-      // Resetear todos los diálogoscd
+      // Resetear todos los diálogos
       this.showDialogCat = false;
       this.showDialogInc = false;
       this.showDialogAlumno = false;
@@ -251,7 +251,7 @@ export default {
     },
     subirDatos() {
       // Lógica para subir los datos al servidor
-      var incidenciaValida = false;
+      let incidenciaValida = false;
       for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
         if (incidencia.name === this.lastWinner) {
           incidenciaValida = true;
