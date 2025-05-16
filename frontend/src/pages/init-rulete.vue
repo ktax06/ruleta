@@ -142,8 +142,22 @@
                 </div>
               </div>
               <!-- Botón de iniciar -->
-              <button type="submit" class="btn btn-success w-100 fs-5 py-2 mt-3 shadow">
-                <i class="bi bi-play-circle me-2"></i> Iniciar Ruleta
+              <button
+                type="submit"
+                class="btn btn-success w-100 fs-5 py-2 mt-3 shadow position-relative overflow-hidden"
+                :disabled="isAnimating"
+                @click="startButtonAnimation"
+                ref="startBtn"
+              >
+                <span :class="{ 'invisible': isAnimating }">
+                  <i class="bi bi-play-circle me-2"></i> Iniciar Ruleta
+                </span>
+                <transition name="expand-fx">
+                  <div
+                    v-if="isAnimating"
+                    class="expand-fx-bg"
+                  ></div>
+                </transition>
               </button>
             </form>
             <!-- Mensajes de error y éxito -->
@@ -187,6 +201,7 @@ export default {
       showIncidenciasPreview: false,
       showAlumnosPreview: false,
       excelFile: null,
+      isAnimating: false,
     };
   },
   watch: {
@@ -292,6 +307,28 @@ export default {
         console.error(error);
         this.errorMessage = 'Ocurrió un error al procesar los datos.';
       }
+    },
+    async startButtonAnimation() {
+      // Previene doble click
+      if (this.isAnimating) return;
+      // Validación previa
+      if (
+        !this.incidenciasPreview ||
+        !this.incidenciasPreview.length ||
+        !this.alumnosPreview ||
+        !this.alumnosPreview.length ||
+        (this.incidenciasPreview.length === 1 && !this.incidenciasPreview[0].Categoria && !this.incidenciasPreview[0].Incidencia) ||
+        (this.alumnosPreview.length === 1 && !this.alumnosPreview[0].Grupo && !this.alumnosPreview[0].Integrante)
+      ) {
+        this.errorMessage = 'Debes cargar o ingresar incidencias y alumnos.';
+        return;
+      }
+      this.isAnimating = true;
+      // Espera la animación antes de continuar (ajusta el tiempo al de la animación CSS)
+      setTimeout(() => {
+        this.handleStart();
+        this.isAnimating = false;
+      }, 900);
     },
     handleExcelChange(event) {
       const file = event.target.files[0];
@@ -527,5 +564,34 @@ input[readonly] {
 }
 .table-sm th, .table-sm td {
   vertical-align: middle !important;
+}
+.expand-fx-bg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(90deg, #198754 60%, #43e97b 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  z-index: 10;
+  animation: expand-fx 0.9s cubic-bezier(.4,2,.6,1) forwards;
+}
+@keyframes expand-fx {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(30);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(60);
+  }
+}
+.invisible {
+  opacity: 0 !important;
 }
 </style>
