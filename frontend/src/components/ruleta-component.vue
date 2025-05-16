@@ -34,7 +34,7 @@
             placeholder="Escribe tu comentario aqui..."></textarea>
           <div class="dialog-buttons">
             <button @click="girarAlumnos">Girar ruleta para elegir alumno</button>
-            <button @click="reiniciar">Enviar incidencia</button>
+            <button @click="reiniciar">Registrar incidencia</button>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@
           <textarea id="comentario" rows="3" v-model="comentario"
             placeholder="Escribe tu comentario aqui..."></textarea>
           <div class="dialog-buttons">
-            <button @click="reiniciar">Reiniciar categorias</button>
+            <button @click="reiniciar">Registrar Incidencia</button>
           </div>
         </div>
       </div>
