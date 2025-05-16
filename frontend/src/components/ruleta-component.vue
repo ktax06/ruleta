@@ -1,6 +1,7 @@
 <template>
-  <div class="row px-5">
+  <div class="row g-5 px-4 py-3">
     <!-- Columna de la ruleta -->
+     <!-- Columna de la ruleta -->
     <div class="col-lg-6 mb-4 position-relative">
       <Roulette @click="launchWheel" @wheel-start="wheelStartedCallback" @wheel-end="wheelEndedCallback" ref="wheel"
         :items="adjustedItems" :size="500" :result-variation="50" :base-display="true" :base-background="'#EEAA33'"
@@ -10,90 +11,123 @@
           <strong>Iniciar</strong>
         </template>
       </Roulette>
-      <!--Diálogo al sortear categorías-->
-      <div v-if="showDialogCat" class="dialog-overlay">
-        <div class="dialog">
-          <h3>¡Categoría ganadora: {{ lastWinner }}!</h3>
-          <div class="dialog-buttons">
-            <button @click="girarIncidencias">Girar ruleta con incidencias</button>
-            <button @click="reiniciar">Reiniciar categorias</button>
+      <!-- Diálogos animados -->
+      <transition name="fade-dialog">
+        <div v-if="showDialogCat" class="dialog-overlay">
+          <div class="dialog-card">
+            <h3 class="text-success mb-3"><i class="bi bi-award"></i> ¡Categoría ganadora!</h3>
+            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
+            <div class="d-flex gap-2 justify-content-end">
+              <button class="btn btn-outline-primary" @click="girarIncidencias">
+                <i class="bi bi-arrow-repeat"></i> Girar incidencias
+              </button>
+              <button class="btn btn-outline-secondary" @click="reiniciar">
+                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <!--Diálogo al sortear incidencias-->
-      <div v-if="showDialogInc" class="dialog-overlay">
-        <div class="dialog">
-          <h3>¡Incidencia ganadora: {{ lastWinner }}!</h3>
-          <label for="alumno">¿A quien afecta?</label>
-          <select class="form-select mt-3" v-model="alumnoSeleccionado">
-            <option selected value="grupo">Afecta a todo el grupo</option>
-            <option v-for="alumno in this.alumnosGrupo" :key="alumno" :value="alumno">{{ alumno }}</option>
-          </select>
-          <label for="comentario">Deja tu comentario:</label>
-          <textarea id="comentario" rows="3" v-model="comentario"
-            placeholder="Escribe tu comentario aqui..."></textarea>
-          <div class="dialog-buttons">
-            <button @click="girarAlumnos">Girar ruleta para elegir alumno</button>
-            <button @click="reiniciar">Registrar incidencia</button>
+      </transition>
+      <transition name="fade-dialog">
+        <div v-if="showDialogInc" class="dialog-overlay">
+          <div class="dialog-card">
+            <h3 class="text-warning mb-3"><i class="bi bi-exclamation-circle"></i> ¡Incidencia ganadora!</h3>
+            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">¿A quién afecta?</label>
+              <select class="form-select" v-model="alumnoSeleccionado">
+                <option selected value="grupo">Afecta a todo el grupo</option>
+                <option v-for="alumno in alumnosGrupo" :key="alumno" :value="alumno">{{ alumno }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Comentario</label>
+              <textarea class="form-control" rows="3" v-model="comentario" placeholder="Escribe tu comentario aquí..."></textarea>
+            </div>
+            <div class="d-flex gap-2 justify-content-end">
+              <button class="btn btn-outline-info" @click="girarAlumnos">
+                <i class="bi bi-person-arrows"></i> Girar alumno
+              </button>
+              <button class="btn btn-outline-success" @click="reiniciar">
+                <i class="bi bi-check2-circle"></i> Registrar
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <!--Diálogo al iniciar para sortear grupos-->
-      <div v-if="showDialogGrupo" class="dialog-overlay">
-        <div class="dialog">
-          <h3>Selecciona un grupo:</h3>
-          <select class="form-select mt-3" v-model="grupoSeleccionado">
-            <option v-for="grupo in this.grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
-          </select>
-          <button @click="girarRuleta" class="btn btn-primary mt-3">Elegir categoría</button>
-        </div>
-      </div>
-      <!--Diálogo al sortear alumnos-->
-      <div v-if="showDialogAlumno" class="dialog-overlay">
-        <div class="dialog">
-          <h3>¡Alumno afectado: {{ lastWinner }}!</h3>
-          <label for="comentario">Deja tu comentario:</label>
-          <textarea id="comentario" rows="3" v-model="comentario"
-            placeholder="Escribe tu comentario aqui..."></textarea>
-          <div class="dialog-buttons">
-            <button @click="reiniciar">Registrar Incidencia</button>
+      </transition>
+      <transition name="fade-dialog">
+        <div v-if="showDialogGrupo" class="dialog-overlay">
+          <div class="dialog-card">
+            <h3 class="mb-3"><i class="bi bi-people"></i> Selecciona un grupo</h3>
+            <select class="form-select mb-4" v-model="grupoSeleccionado">
+              <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
+            </select>
+            <button @click="girarRuleta" class="btn btn-primary w-100">
+              <i class="bi bi-arrow-right-circle"></i> Elegir categoría
+            </button>
           </div>
         </div>
-      </div>
+      </transition>
+      <transition name="fade-dialog">
+        <div v-if="showDialogAlumno" class="dialog-overlay">
+          <div class="dialog-card">
+            <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Alumno afectado!</h3>
+            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Comentario</label>
+              <textarea class="form-control" rows="3" v-model="comentario" placeholder="Escribe tu comentario aquí..."></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-outline-success" @click="reiniciar">
+                <i class="bi bi-check2-circle"></i> Registrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
     <!-- Columna de la lista -->
     <div class="col-lg-6">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0 d-flex align-items-center">
-            <i class="bi bi-list me-2"></i> Items en la Ruleta
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-header bg-primary py-3">
+          <h5 class="mb-0 d-flex align-items-center text-white">
+            <i class="bi bi-list-task me-3 fs-4"></i>
+            Elementos de la Ruleta
           </h5>
         </div>
-        <div class="card-body">
-          <ul class="list-group">
-            <li v-for="(item, index) in items" :key="item.id"
-              class="list-group-item d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center flex-grow-1">
-                <!-- Input con diseño mejorado -->
-                <div class="input-group me-3">
-                  <span class="input-group-text bg-light">
-                    <i class="bi bi-pencil"></i>
-                  </span>
-                  <input type="text" class="form-control" v-model="item.htmlContent"
-                    @input="updateItem(index, item.htmlContent)" placeholder="Editar contenido" />
+        
+        <div class="card-body p-0">
+          <draggable 
+            v-model="items" 
+            class="list-group list-group-flush"
+            item-key="id"
+            @end="onDragEnd"
+          >
+            <template #item="{ element, index }">
+              <li class="list-group-item d-flex align-items-center px-4 py-3">
+                <div class="d-flex align-items-center flex-grow-1 gap-3">
+                  <button 
+                    class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
+                    @click="toggleVisibility(index)"
+                  >
+                    <i :class="element.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  </button>
+                  
+                  <input
+                    type="text"
+                    class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
+                    v-model="element.htmlContent"
+                    @input="updateItem(index, $event.target.value)"
+                    placeholder="Editar elemento"
+                  >
                 </div>
-                <!-- Botón de visibilidad -->
-                <button class="btn btn-sm btn-outline-secondary" @click="toggleVisibility(index)"
-                  title="Ocultar/Mostrar">
-                  <i class="bi" :class="item.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
-                </button>
-              </div>
-              <!-- Badge con diseño mejorado -->
-              <span class="badge bg-info text-dark">
-                <i class="bi bi-tag"></i> {{ item.name }}
-              </span>
-            </li>
-          </ul>
+                
+                <span class="badge rounded-pill bg-info bg-opacity-25 text-info">
+                  {{ element.name }}
+                </span>
+              </li>
+            </template>
+          </draggable>
         </div>
       </div>
     </div>
@@ -102,12 +136,14 @@
 
 <script>
 import { Roulette } from "vue3-roulette";
+import draggable from "vuedraggable";
 import { toRaw } from 'vue';
 
 export default {
   name: "RuletaComponent",
   components: {
     Roulette,
+    draggable,
   },
   props: {
     alumnos: {
@@ -356,5 +392,59 @@ textarea {
   border-radius: 4px;
   resize: vertical;
   min-height: 100px;
+}
+
+.dialog-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeInBg 0.4s;
+}
+@keyframes fadeInBg {
+  from { background: rgba(0,0,0,0); }
+  to   { background: rgba(0,0,0,0.45); }
+}
+.fade-dialog-enter-active, .fade-dialog-leave-active {
+  transition: opacity 0.35s cubic-bezier(.4,2,.6,1);
+}
+.fade-dialog-enter-from, .fade-dialog-leave-to {
+  opacity: 0;
+}
+.dialog-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(60,60,90,0.18);
+  padding: 2.5rem 2rem 2rem 2rem;
+  min-width: 340px;
+  max-width: 95vw;
+  animation: popIn 0.35s cubic-bezier(.4,2,.6,1);
+}
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.card {
+  border-radius: 1.5rem;
+}
+.card-header {
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
+.list-group-item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+}
+.list-group-item:last-child {
+  border-bottom: none;
+}
+input[readonly] {
+  background-color: #f8f9fa !important;
+  color: #6c757d;
+  cursor: not-allowed;
 }
 </style>
