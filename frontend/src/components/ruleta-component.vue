@@ -3,7 +3,7 @@
     <!-- Columna de la ruleta -->
     <div class="col-lg-6 mb-4 position-relative">
       <Roulette @click="launchWheel" @wheel-start="wheelStartedCallback" @wheel-end="wheelEndedCallback" ref="wheel"
-        :items="adjustedItems" :size="500" :result-variation="0" :base-display="true" :base-background="'#EEAA33'"
+        :items="adjustedItems" :size="500" :result-variation="50" :base-display="true" :base-background="'#EEAA33'"
         :reset-on-end="false" :display-shadow="true" :duration="5" :horizontal-content="true" :counter-clockwise="true"
         :centered-indicator="true"> <!--Hector: items: "items"-->
         <template #baseContent>
@@ -34,7 +34,7 @@
             placeholder="Escribe tu comentario aqui..."></textarea>
           <div class="dialog-buttons">
             <button @click="girarAlumnos">Girar ruleta para elegir alumno</button>
-            <button @click="reiniciar">Reiniciar categorias</button>
+            <button @click="reiniciar">Registrar incidencia</button>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@
           <textarea id="comentario" rows="3" v-model="comentario"
             placeholder="Escribe tu comentario aqui..."></textarea>
           <div class="dialog-buttons">
-            <button @click="reiniciar">Reiniciar categorias</button>
+            <button @click="reiniciar">Registrar Incidencia</button>
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@ export default {
   },
   props: {
     alumnos: {
-      type: Array,
+      type: Object,
       required: true,
     },
     incidencias: {
@@ -132,8 +132,13 @@ export default {
       grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: null,
       items: this.getCategorias(),
+      categoriaSorteada: null,
       wheelStartedCallback: () => {
-        console.log("Ruleta iniciada");
+        this.showDialogCat = false;
+        this.showDialogInc = false;
+        this.showDialogGrupo = false;
+        this.showDialogAlumno = false;
+        this.comentario = "";
       },
       wheelEndedCallback: (resultIndex) => {
         if (resultIndex !== null) {
@@ -201,6 +206,7 @@ export default {
     girarIncidencias() {
       this.etapaRuleta = 'incidencias';
       this.items = this.getIncidencias(this.lastWinner);
+      this.categoriaSorteada = this.lastWinner;
       this.showDialogCat = false;
     },
     reiniciar() {
@@ -216,6 +222,7 @@ export default {
       this.lastWinner = null;
       this.comentario = "";
       this.grupoSeleccionado = null;
+
     },
     girarAlumnos() {
       this.etapaRuleta = 'alumnos';
@@ -233,9 +240,8 @@ export default {
       return this.alumnos.grupos[grupo] || [];
     },
     girarGrupos() {
-      console.log("Girar ruleta con grupos");
       // Implementar la lógica para girar la ruleta con grupos
-      console.log(this.alumnos.grupos);
+
     },
     getGrupos() {
       if (!this.alumnos) {
@@ -244,9 +250,55 @@ export default {
       return Object.keys(toRaw(this.alumnos.grupos) || this.alumnos.grupos);
     },
     subirDatos() {
-      // Implementar la lógica para subir los datos al servidor
-      console.log("Comentario:", this.comentario);
-      // Aquí puedes hacer una llamada a la API para enviar el comentario
+      // Lógica para subir los datos al servidor
+      let incidenciaValida = false;
+      for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
+        if (incidencia.name === this.lastWinner) {
+          incidenciaValida = true;
+          break;
+        }
+      }
+      if (!incidenciaValida) {
+        console.error("Error: La incidencia ganadora no es válida.");
+        return;
+      }
+      if (!this.grupoSeleccionado) {
+        console.error("Error: No se ha seleccionado un grupo.");
+        return;
+      }
+      if (!this.alumnoSeleccionado) {
+        this.alumnoSeleccionado = "grupo";
+      }
+      if (!this.comentario) {
+        this.comentario = "Sin comentario";
+      }
+      const data = {
+        fecha: new Date().toLocaleString(),
+        categoria: this.categoriaSorteada,
+        incidencia: this.lastWinner,
+        grupo: this.grupoSeleccionado,
+        alumno: this.alumnoSeleccionado,
+        mensaje: this.comentario,
+      };
+      fetch("/api/subir/sorteo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la respuesta del servidor");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Datos enviados correctamente:", data);
+        })
+        .catch((error) => {
+          console.error("Error al enviar los datos:", error);
+        });
     },
     girarRuleta() {
       this.showDialogGrupo = false;
@@ -254,9 +306,7 @@ export default {
         console.error("Error: No se ha seleccionado un grupo válido.");
         return;
       }
-      console.log("Girar ruleta con grupo:", this.grupoSeleccionado);
       this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
-      console.log("Alumnos del grupo:", this.alumnosGrupo);
     }
   },
 };
