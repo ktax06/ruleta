@@ -1,7 +1,6 @@
 <template>
   <div class="row g-5 px-4 py-3">
     <!-- Columna de la ruleta -->
-     <!-- Columna de la ruleta -->
     <div class="col-lg-6 mb-4 position-relative">
       <Roulette @click="launchWheel" @wheel-start="wheelStartedCallback" @wheel-end="wheelEndedCallback" ref="wheel"
         :items="adjustedItems" :size="500" :result-variation="50" :base-display="true" :base-background="'#EEAA33'"
@@ -42,7 +41,8 @@
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Comentario</label>
-              <textarea class="form-control" rows="3" v-model="comentario" placeholder="Escribe tu comentario aquí..."></textarea>
+              <textarea class="form-control" rows="3" v-model="comentario"
+                placeholder="Escribe tu comentario aquí..."></textarea>
             </div>
             <div class="d-flex gap-2 justify-content-end">
               <button class="btn btn-outline-info" @click="girarAlumnos">
@@ -60,6 +60,8 @@
           <div class="dialog-card">
             <h3 class="mb-3"><i class="bi bi-people"></i> Selecciona un grupo</h3>
             <select class="form-select mb-4" v-model="grupoSeleccionado">
+              <!--Agregar opcion por defecto no seleccionable-->
+              <option selected disabled value="">Selecciona un grupo</option>
               <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
             </select>
             <button @click="girarRuleta" class="btn btn-primary w-100">
@@ -75,7 +77,8 @@
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
             <div class="mb-3">
               <label class="form-label fw-bold">Comentario</label>
-              <textarea class="form-control" rows="3" v-model="comentario" placeholder="Escribe tu comentario aquí..."></textarea>
+              <textarea class="form-control" rows="3" v-model="comentario"
+                placeholder="Escribe tu comentario aquí..."></textarea>
             </div>
             <div class="d-flex justify-content-end">
               <button class="btn btn-outline-success" @click="reiniciar">
@@ -95,33 +98,23 @@
             Elementos de la Ruleta
           </h5>
         </div>
-        
+
         <div class="card-body p-0">
-          <draggable 
-            v-model="items" 
-            class="list-group list-group-flush"
-            item-key="id"
-            @end="onDragEnd"
-          >
+          <draggable v-model="items" class="list-group list-group-flush" item-key="id" @end="onDragEnd">
             <template #item="{ element, index }">
               <li class="list-group-item d-flex align-items-center px-4 py-3">
                 <div class="d-flex align-items-center flex-grow-1 gap-3">
-                  <button 
-                    class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
-                    @click="toggleVisibility(index)"
-                  >
+                  <button class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
+                    @click="toggleVisibility(index)">
                     <i :class="element.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
                   </button>
-                  
-                  <input
-                    type="text"
-                    class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
-                    v-model="element.htmlContent"
-                    @input="updateItem(index, $event.target.value)"
-                    placeholder="Editar elemento"
-                  >
+
+                  <input type="text" class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
+                    v-model="element.htmlContent" @input="updateItem(index, $event.target.value)"
+                    placeholder="Editar elemento">
                 </div>
-                
+                <input type="color" v-model="element.background" @input="updateColor(index, $event.target.value)"
+                  class="form-control-color">
                 <span class="badge rounded-pill bg-info bg-opacity-25 text-info">
                   {{ element.name }}
                 </span>
@@ -157,6 +150,7 @@ export default {
   },
   data() {
     return {
+      colorIndex: 0,
       comentario: "",
       etapaRuleta: "categorias",
       lastWinner: null,
@@ -166,7 +160,7 @@ export default {
       showDialogAlumno: false,
       alumnosGrupo: [],
       grupos: Object.keys(toRaw(this.alumnos.grupos)),
-      grupoSeleccionado: null,
+      grupoSeleccionado: "",
       items: this.getCategorias(),
       categoriaSorteada: null,
       wheelStartedCallback: () => {
@@ -197,8 +191,8 @@ export default {
   },
   computed: {
     visibleItems() {
-      // Filtra los items que no están ocultos
-      return this.items.filter((item) => !item.hidden);
+      this.mapeoColor();
+      return this.items.filter(item => !item.hidden);
     },
     adjustedItems() {
       // Asegura que haya al menos 4 items visibles duplicando los existentes
@@ -227,6 +221,28 @@ export default {
     },
     updateItem(index, newContent) {
       this.items[index].htmlContent = newContent;
+    },
+    updateColor(index, newColor) {
+      // Crea un nuevo array sin modificar el original
+      this.items = this.items.map((item, i) =>
+        i === index
+          ? { ...item, background: newColor || this.getRandomColor() }
+          : item
+      );
+      //this.$nextTick(() => this.$refs.wheel?.refreshWheel());
+    },
+    mapeoColor() {
+      this.items = this.items.map(item => ({
+        ...item,
+        background: item.background || this.getRandomColor()
+      }));
+    },
+    getRandomColor() {
+      const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC24A', '#FF6D6D', '#7C4DFF', '#00B4D8',
+        '#FFA3B1', '#A5D8FF', '#FFD166', '#06D6A0', '#EF476F', '#118AB2', '#FFC43D', '#1B9AAA', '#C73E1D', '#5C6BC0', '#26A69A',
+        '#7E57C2', '#EC407A', '#AB47BC'];
+      this.colorIndex = (this.colorIndex + 1) % colors.length;
+      return colors[this.colorIndex];
     },
     toggleVisibility(index) {
       // Alterna la visibilidad del item
@@ -257,7 +273,7 @@ export default {
       // Resetear otros estados
       this.lastWinner = null;
       this.comentario = "";
-      this.grupoSeleccionado = null;
+      this.grupoSeleccionado = "";
 
     },
     girarAlumnos() {
@@ -337,11 +353,11 @@ export default {
         });
     },
     girarRuleta() {
-      this.showDialogGrupo = false;
       if (!this.grupoSeleccionado || !this.getGrupos().includes(this.grupoSeleccionado)) {
         console.error("Error: No se ha seleccionado un grupo válido.");
         return;
       }
+      this.showDialogGrupo = false;
       this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
     }
   },
@@ -396,52 +412,79 @@ textarea {
 
 .dialog-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.45);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
   animation: fadeInBg 0.4s;
 }
+
 @keyframes fadeInBg {
-  from { background: rgba(0,0,0,0); }
-  to   { background: rgba(0,0,0,0.45); }
+  from {
+    background: rgba(0, 0, 0, 0);
+  }
+
+  to {
+    background: rgba(0, 0, 0, 0.45);
+  }
 }
-.fade-dialog-enter-active, .fade-dialog-leave-active {
-  transition: opacity 0.35s cubic-bezier(.4,2,.6,1);
+
+.fade-dialog-enter-active,
+.fade-dialog-leave-active {
+  transition: opacity 0.35s cubic-bezier(.4, 2, .6, 1);
 }
-.fade-dialog-enter-from, .fade-dialog-leave-to {
+
+.fade-dialog-enter-from,
+.fade-dialog-leave-to {
   opacity: 0;
 }
+
 .dialog-card {
   background: #fff;
   border-radius: 1.5rem;
-  box-shadow: 0 8px 32px 0 rgba(60,60,90,0.18);
+  box-shadow: 0 8px 32px 0 rgba(60, 60, 90, 0.18);
   padding: 2.5rem 2rem 2rem 2rem;
   min-width: 340px;
   max-width: 95vw;
-  animation: popIn 0.35s cubic-bezier(.4,2,.6,1);
+  animation: popIn 0.35s cubic-bezier(.4, 2, .6, 1);
 }
+
 @keyframes popIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
+
 .card {
   border-radius: 1.5rem;
 }
+
 .card-header {
   border-top-left-radius: 1.5rem;
   border-top-right-radius: 1.5rem;
 }
+
 .list-group-item {
   background: transparent;
   border: none;
   border-bottom: 1px solid #e9ecef;
 }
+
 .list-group-item:last-child {
   border-bottom: none;
 }
+
 input[readonly] {
   background-color: #f8f9fa !important;
   color: #6c757d;
