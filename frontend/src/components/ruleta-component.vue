@@ -156,7 +156,10 @@ export default {
     },
   },
   data() {
+    const gruposRaw = Object.keys(toRaw(this.alumnos.grupos));
     return {
+      gruposOriginales: gruposRaw,
+      grupos: [...gruposRaw],
       comentario: "",
       etapaRuleta: "categorias",
       lastWinner: null,
@@ -165,7 +168,6 @@ export default {
       showDialogGrupo: true,
       showDialogAlumno: false,
       alumnosGrupo: [],
-      grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: null,
       items: this.getCategorias(),
       categoriaSorteada: null,
@@ -246,7 +248,6 @@ export default {
       this.showDialogCat = false;
     },
     reiniciar() {
-      this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
       // Resetear todos los diálogos
@@ -343,6 +344,7 @@ export default {
         return;
       }
       this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
+      this.grupos = this.grupos.filter(grupo => grupo !== this.grupoSeleccionado);
     }
   },
 };
