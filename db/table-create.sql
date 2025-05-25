@@ -1,0 +1,9 @@
+CREATE TABLE SORTEO (
+    id SERIAL PRIMARY KEY,
+    fecha TIMESTAMP NOT NULL,
+    categoria VARCHAR(255) NOT NULL,
+    incidencia VARCHAR(255) NOT NULL,
+    grupo VARCHAR(255) NOT NULL,
+    alumno VARCHAR(255) NOT NULL,
+    mensaje TEXT
+);

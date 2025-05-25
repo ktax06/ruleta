@@ -51,8 +51,7 @@ services:
       - FRONTEND_PORT=${FRONTEND_PORT}
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/start.sh:/start.sh
-    entrypoint: /bin/bash -c "chmod +x /start.sh && /start.sh"
+    entrypoint: ["nginx", "-g", "daemon off;"]
     depends_on:
       - frontend
       - backend

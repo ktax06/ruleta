@@ -11,10 +11,15 @@
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3",
     "core-js": "^3.8.3",
+    "exceljs": "^4.4.0",
     "papaparse": "^5.5.2",
+    "primeicons": "^7.0.0",
+    "primevue": "^3.53.1",
     "vue": "^3.2.13",
     "vue-router": "^4.5.0",
-    "vue3-roulette": "^0.3.3"
+    "vue3-roulette": "^0.3.3",
+    "vuedraggable": "^4.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

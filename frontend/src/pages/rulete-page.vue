@@ -4,7 +4,7 @@
     <div v-if="!alumnos || !incidencias">
       <p>No se proporcionaron datos. Redirigiendo...</p>
     </div>
-    <div v-else>
+    <div class="px-5" v-else>
       <RuletaComponent :alumnos="alumnos" :incidencias="incidencias"></RuletaComponent>
     </div>
   </div>
@@ -22,6 +22,7 @@ export default {
     return {
       alumnos: null,
       incidencias: null,
+      loading: true
     };
   },
   created() {
@@ -34,4 +35,4 @@ export default {
     }
   },
 };
-</script> 
+</script>
