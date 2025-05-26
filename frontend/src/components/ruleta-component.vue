@@ -189,7 +189,7 @@ export default {
       showDialogGrupoRandom: false,
       incidenciaGanadora: '',
       alumnosGrupo: [],
-      grupos: Object.keys(toRaw(this.alumnos.grupos)),
+      //grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: "",
       gruposSeleccionados: [],
       alumnosSeleccionados: [],
@@ -299,6 +299,7 @@ export default {
       this.showDialogCat = false;
     },
     reiniciar() {
+      this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
       // Resetear todos los diálogos
