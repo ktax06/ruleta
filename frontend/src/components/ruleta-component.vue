@@ -45,8 +45,8 @@
                 placeholder="Escribe tu comentario aquí..."></textarea>
             </div>
             <div class="d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-info" @click="girarAlumnos">
-                <i class="bi bi-person-arrows"></i> Girar alumno
+              <button class="btn btn-outline-primary" @click="girarAlumnos">
+                <i class="bi bi-person-workspace"></i> Girar alumno
               </button>
               <button class="btn btn-outline-success" @click="reiniciar">
                 <i class="bi bi-check2-circle"></i> Registrar
@@ -59,12 +59,15 @@
         <div v-if="showDialogGrupo" class="dialog-overlay">
           <div class="dialog-card">
             <h3 class="mb-3"><i class="bi bi-people"></i> Selecciona un grupo</h3>
-            <select class="form-select mb-4" v-model="grupoSeleccionado">
-              <!--Agregar opcion por defecto no seleccionable-->
+            <select class="form-select mb-4" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
+              @change="mostrarError = false">
               <option selected disabled value="">Selecciona un grupo</option>
               <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
             </select>
-            <button @click="girarRuleta" class="btn btn-primary w-100">
+            <div class="invalid-feedback" v-if="mostrarError">
+              Por favor elige un grupo.
+            </div>
+            <button @click="validarSeleccion" class="btn btn-primary w-100">
               <i class="bi bi-arrow-right-circle"></i> Elegir categoría
             </button>
           </div>
@@ -81,8 +84,29 @@
                 placeholder="Escribe tu comentario aquí..."></textarea>
             </div>
             <div class="d-flex justify-content-end">
+              <button class="btn btn-outline-primary me-2" @click="girarGrupos">
+                <i class="bi bi-people"></i> Girar grupos
+              </button>
               <button class="btn btn-outline-success" @click="reiniciar">
                 <i class="bi bi-check2-circle"></i> Registrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
+      <transition name="fade-dialog">
+        <div v-if="showDialogGrupoRandom" class="dialog-overlay">
+          <div class="dialog-card">
+            <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Grupo afectado!</h3>
+            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Comentario</label>
+              <textarea class="form-control" rows="3" v-model="comentario"
+                placeholder="Escribe tu comentario aquí..."></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-outline-primary me-2" @click="girarAlumnosRandom">
+                <i class="bi bi-person-workspace"></i> Girar alumno
               </button>
             </div>
           </div>
@@ -151,6 +175,7 @@ export default {
   data() {
     return {
       colorIndex: 0,
+      mostrarError: false,
       comentario: "",
       etapaRuleta: "categorias",
       lastWinner: null,
@@ -158,16 +183,22 @@ export default {
       showDialogInc: false,
       showDialogGrupo: true,
       showDialogAlumno: false,
+      showDialogGrupoRandom: false,
+      incidenciaGanadora: '',
       alumnosGrupo: [],
       grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: "",
+      gruposSeleccionados: [],
+      alumnosSeleccionados: [],
       items: this.getCategorias(),
       categoriaSorteada: null,
+      alumnoSeleccionado: "grupo", // Por defecto, afecta a todo el grupo
       wheelStartedCallback: () => {
         this.showDialogCat = false;
         this.showDialogInc = false;
         this.showDialogGrupo = false;
         this.showDialogAlumno = false;
+        this.showDialogGrupoRandom = false;
         this.comentario = "";
       },
       wheelEndedCallback: (resultIndex) => {
@@ -182,6 +213,9 @@ export default {
               break;
             case 'alumnos':
               this.showDialogAlumno = true;
+              break;
+            case 'grupos':
+              this.showDialogGrupoRandom = true;
               break;
           }
         }
@@ -274,16 +308,30 @@ export default {
       this.lastWinner = null;
       this.comentario = "";
       this.grupoSeleccionado = "";
-
+      this.gruposSeleccionados = [];
+      this.alumnosSeleccionados = [];
+      this.alumnoSeleccionado = "grupo"; // Por defecto, afecta a todo el grupo
     },
     girarAlumnos() {
       this.etapaRuleta = 'alumnos';
+      this.incidenciaGanadora = this.lastWinner;
       this.items = this.alumnosGrupo.map(alumno => ({
         htmlContent: alumno,
         name: alumno,
         hidden: false
       }));
       this.showDialogInc = false;
+    },
+    girarAlumnosRandom() {
+      this.gruposSeleccionados.push(this.lastWinner);
+      console.log("Grupo seleccionado:", this.lastWinner);
+      this.etapaRuleta = 'alumnos';
+      this.items = this.getAlumnos(this.lastWinner).map(alumno => ({
+        htmlContent: alumno,
+        name: alumno,
+        hidden: false
+      }));
+      this.showDialogGrupoRandom = false;
     },
     getAlumnos(grupo) {
       if (!this.alumnos) {
@@ -292,14 +340,29 @@ export default {
       return this.alumnos.grupos[grupo] || [];
     },
     girarGrupos() {
-      // Implementar la lógica para girar la ruleta con grupos
-
+      const nuevosGrupos=this.getGruposRandom(this.gruposSeleccionados);
+      this.alumnosSeleccionados.push(this.lastWinner);
+      console.log("Alumno seleccionado:", this.lastWinner);
+      this.etapaRuleta = 'grupos';
+      this.items = nuevosGrupos.map(grupo => ({
+        htmlContent: grupo,
+        name: grupo,
+        hidden: false
+      }));
+      this.showDialogAlumno = false;
     },
     getGrupos() {
       if (!this.alumnos) {
         return [];
       }
       return Object.keys(toRaw(this.alumnos.grupos) || this.alumnos.grupos);
+    },
+    getGruposRandom(){
+      if (!this.alumnos || !this.alumnos.grupos) {
+        return [];
+      }
+      //retorna todos los grupos menos los elementos de gruposSeleccionados
+      return Object.keys(this.alumnos.grupos).filter(g => !this.gruposSeleccionados.includes(g));
     },
     subirDatos() {
       // Lógica para subir los datos al servidor
@@ -312,14 +375,15 @@ export default {
       }
       if (!incidenciaValida) {
         console.error("Error: La incidencia ganadora no es válida.");
-        return;
+        incidenciaValida = this.incidenciaGanadora;
+        this.alumnosSeleccionados.push(this.lastWinner);
       }
       if (!this.grupoSeleccionado) {
         console.error("Error: No se ha seleccionado un grupo.");
         return;
       }
       if (!this.alumnoSeleccionado) {
-        this.alumnoSeleccionado = "grupo";
+        //this.alumnoSeleccionado = "grupo";
       }
       if (!this.comentario) {
         this.comentario = "Sin comentario";
@@ -328,10 +392,14 @@ export default {
         fecha: new Date().toLocaleString(),
         categoria: this.categoriaSorteada,
         incidencia: this.lastWinner,
-        grupo: this.grupoSeleccionado,
-        alumno: this.alumnoSeleccionado,
+        grupo: this.gruposSeleccionados[0],
+        alumno: this.alumnosSeleccionados[0] || this.alumnoSeleccionado,
         mensaje: this.comentario,
       };
+      console.log("Grupo seleccionado: ", data["grupo"]);
+      console.log("Alumno seleccionado: ", data["alumno"]);
+      console.log("alumnos[0]:", this.alumnosSeleccionados[0]);
+      console.log("alumno:", this.alumnoSeleccionado);
       fetch("/api/subir/sorteo", {
         method: "POST",
         headers: {
@@ -359,7 +427,16 @@ export default {
       }
       this.showDialogGrupo = false;
       this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
-    }
+    },
+    validarSeleccion() {
+      if (!this.grupoSeleccionado) {
+        this.mostrarError = true;
+      } else {
+        this.gruposSeleccionados.push(this.grupoSeleccionado);
+        this.mostrarError = false;
+        this.girarRuleta(); // Llama a tu función original
+      }
+    },
   },
 };
 </script>
