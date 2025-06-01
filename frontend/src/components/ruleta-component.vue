@@ -5,7 +5,7 @@
       <Roulette @click="launchWheel" @wheel-start="wheelStartedCallback" @wheel-end="wheelEndedCallback" ref="wheel"
         :items="adjustedItems" :size="500" :result-variation="50" :base-display="true" :base-background="'#EEAA33'"
         :reset-on-end="false" :display-shadow="true" :duration="5" :horizontal-content="true" :counter-clockwise="true"
-        :centered-indicator="true"> <!--Hector: items: "items"-->
+        :centered-indicator="true">
         <template #baseContent>
           <strong>Iniciar</strong>
         </template>
@@ -49,8 +49,7 @@
               <button class="btn btn-outline-primary" @click="girarAlumnos">
                 <i class="bi bi-person-workspace"></i> Girar alumno
               </button>
-              <button class="btn btn-outline-success" @click="subirDatos(false)">
-                <!-- Asigna lastWinner como incidencia -->
+              <button class="btn btn-outline-success" @click="subirDatos()">
                 <i class="bi bi-check2-circle"></i> Registrar
               </button>
             </div>
@@ -88,6 +87,11 @@
           <div class="dialog-card">
             <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Alumno afectado!</h3>
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
+            <div v-if="ifGruposSeleccionados" class="mb-3">
+              <p><strong>Alumnos seleccionados: </strong>{{ alumnosSeleccionados }}</p>
+              <p><strong>Grupos seleccionados: </strong>{{ gruposSeleccionados }}</p>
+              <p>Insertar como comentario para guardar en DB</p>
+            </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Comentario</label>
               <textarea class="form-control" rows="3" v-model="comentario"
@@ -97,7 +101,7 @@
               <button class="btn btn-outline-primary me-2" @click="girarGrupos">
                 <i class="bi bi-people"></i> Girar grupos
               </button>
-              <button class="btn btn-outline-success" @click="subirDatos(true)"> <!-- Asigna lastWinner como alumno -->
+              <button class="btn btn-outline-success" @click="subirDatos()">
                 <i class="bi bi-check2-circle"></i> Registrar
               </button>
             </div>
@@ -109,11 +113,6 @@
           <div class="dialog-card">
             <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Grupo afectado!</h3>
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Comentario</label>
-              <textarea class="form-control" rows="3" v-model="comentario"
-                placeholder="Escribe tu comentario aquí..."></textarea>
-            </div>
             <div class="d-flex justify-content-end">
               <button class="btn btn-outline-primary me-2" @click="girarAlumnosRandom">
                 <i class="bi bi-person-workspace"></i> Girar alumno
@@ -199,9 +198,9 @@ export default {
       showDialogGrupoRandom: false,
       incidenciaGanadora: null,
       alumnosGrupo: [],
-      //grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: "",
       gruposSeleccionados: [],
+      ifGruposSeleccionados: false,
       alumnosSeleccionados: [],
       items: this.getCategorias(),
       categoriaSorteada: null,
@@ -219,15 +218,20 @@ export default {
           this.lastWinner = resultIndex.name;
           switch (this.etapaRuleta) {
             case 'categorias':
+              this.gruposSeleccionados.push(this.grupoSeleccionado);
               this.showDialogCat = true;
               break;
             case 'incidencias':
+              this.incidenciaGanadora = this.lastWinner;
               this.showDialogInc = true;
               break;
             case 'alumnos':
+              this.alumnosSeleccionados.push(this.lastWinner);
               this.showDialogAlumno = true;
               break;
             case 'grupos':
+              this.gruposSeleccionados.push(this.lastWinner);
+              this.ifGruposSeleccionados = true;
               this.showDialogGrupoRandom = true;
               break;
           }
@@ -276,7 +280,6 @@ export default {
           ? { ...item, background: newColor || this.getRandomColor() }
           : item
       );
-      //this.$nextTick(() => this.$refs.wheel?.refreshWheel());
     },
     mapeoColor() {
       this.items = this.items.map(item => ({
@@ -309,7 +312,6 @@ export default {
       this.showDialogCat = false;
     },
     reiniciar(atras) {
-      //this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
       // Resetear todos los diálogos
@@ -325,6 +327,7 @@ export default {
       this.alumnosSeleccionados = [];
       this.alumnoSeleccionado = "grupo"; // Por defecto, afecta a todo el grupo
       this.incidenciaGanadora = undefined;
+      this.ifGruposSeleccionados = false;
       if (atras) {
         // Redirige a localhost
         window.location.href = "http://localhost/";
@@ -341,7 +344,6 @@ export default {
       this.showDialogInc = false;
     },
     girarAlumnosRandom() {
-      this.gruposSeleccionados.push(this.lastWinner);
       console.log("Grupo seleccionado:", this.lastWinner);
       this.etapaRuleta = 'alumnos';
       this.items = this.getAlumnos(this.lastWinner).map(alumno => ({
@@ -359,7 +361,6 @@ export default {
     },
     girarGrupos() {
       const nuevosGrupos = this.getGruposRandom(this.gruposSeleccionados);
-      this.alumnosSeleccionados.push(this.lastWinner);
       console.log("Alumno seleccionado:", this.lastWinner);
       this.etapaRuleta = 'grupos';
       this.items = nuevosGrupos.map(grupo => ({
@@ -382,30 +383,11 @@ export default {
       //retorna todos los grupos menos los elementos de gruposSeleccionados
       return Object.keys(this.alumnos.grupos).filter(g => !this.gruposSeleccionados.includes(g));
     },
-    subirDatos(alumno) {
+    subirDatos() {
       // Lógica para subir los datos al servidor
-      /*
-      let incidenciaValida = false;
-      for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
-        if (incidencia.name === this.lastWinner) {
-          incidenciaValida = true;
-          break;
-        }
-      }
-      if (!incidenciaValida) {
-        console.error("Error: La incidencia ganadora no es válida.");
-        incidenciaValida = this.incidenciaGanadora;
-        this.alumnosSeleccionados.push(this.lastWinner);
-      }
-      */ // Despues revisar arrays con alumnos y grupos infinitos
       if (!this.grupoSeleccionado) {
         console.error("Error: No se ha seleccionado un grupo.");
         return;
-      }
-      if (alumno) {
-        this.alumnosSeleccionados.push(this.lastWinner); // Asigna lastWinner como alumno
-      } else {
-        this.incidenciaGanadora = this.lastWinner; // Asigna lastWinner como incidencia ganadora
       }
       if (!this.comentario) {
         this.comentario = "Sin comentario";
@@ -456,7 +438,6 @@ export default {
       if (!this.grupoSeleccionado) {
         this.mostrarError = true;
       } else {
-        this.gruposSeleccionados.push(this.grupoSeleccionado);
         this.mostrarError = false;
         this.girarRuleta(); // Llama a tu función original
       }
