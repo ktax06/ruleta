@@ -20,7 +20,8 @@
               <button class="btn btn-outline-primary" @click="girarIncidencias">
                 <i class="bi bi-arrow-repeat"></i> Girar incidencias
               </button>
-              <button class="btn btn-outline-secondary" @click="reiniciar">
+              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
+                <!-- Reinicia y redirige a localhost -->
                 <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
               </button>
             </div>
@@ -48,7 +49,8 @@
               <button class="btn btn-outline-primary" @click="girarAlumnos">
                 <i class="bi bi-person-workspace"></i> Girar alumno
               </button>
-              <button class="btn btn-outline-success" @click="reiniciar">
+              <button class="btn btn-outline-success" @click="subirDatos(false)">
+                <!-- Asigna lastWinner como incidencia -->
                 <i class="bi bi-check2-circle"></i> Registrar
               </button>
             </div>
@@ -59,17 +61,25 @@
         <div v-if="showDialogGrupo" class="dialog-overlay">
           <div class="dialog-card">
             <h3 class="mb-3"><i class="bi bi-people"></i> Selecciona un grupo</h3>
-            <select class="form-select mb-4" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
-              @change="mostrarError = false">
-              <option selected disabled value="">Selecciona un grupo</option>
-              <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
-            </select>
-            <div class="invalid-feedback" v-if="mostrarError">
-              Por favor elige un grupo.
+            <div class="m-3">
+              <select class="form-select" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
+                @change="mostrarError = false">
+                <option selected disabled value="">Selecciona un grupo</option>
+                <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
+              </select>
+              <div class="invalid-feedback" v-if="mostrarError">
+                Por favor elige un grupo.
+              </div>
             </div>
-            <button @click="validarSeleccion" class="btn btn-primary w-100">
-              <i class="bi bi-arrow-right-circle"></i> Elegir categoría
-            </button>
+            <div class="d-flex gap-2 justify-content-end">
+              <button @click="validarSeleccion" class="btn btn-primary">
+                <i class="bi bi-arrow-right-circle"></i> Elegir categoría
+              </button>
+              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
+                <!-- Reinicia y redirige a localhost -->
+                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+              </button>
+            </div>
           </div>
         </div>
       </transition>
@@ -87,7 +97,7 @@
               <button class="btn btn-outline-primary me-2" @click="girarGrupos">
                 <i class="bi bi-people"></i> Girar grupos
               </button>
-              <button class="btn btn-outline-success" @click="reiniciar">
+              <button class="btn btn-outline-success" @click="subirDatos(true)"> <!-- Asigna lastWinner como alumno -->
                 <i class="bi bi-check2-circle"></i> Registrar
               </button>
             </div>
@@ -187,7 +197,7 @@ export default {
       showDialogGrupo: true,
       showDialogAlumno: false,
       showDialogGrupoRandom: false,
-      incidenciaGanadora: '',
+      incidenciaGanadora: null,
       alumnosGrupo: [],
       //grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: "",
@@ -298,8 +308,8 @@ export default {
       this.categoriaSorteada = this.lastWinner;
       this.showDialogCat = false;
     },
-    reiniciar() {
-      this.subirDatos();
+    reiniciar(atras) {
+      //this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
       // Resetear todos los diálogos
@@ -314,10 +324,15 @@ export default {
       this.gruposSeleccionados = [];
       this.alumnosSeleccionados = [];
       this.alumnoSeleccionado = "grupo"; // Por defecto, afecta a todo el grupo
+      this.incidenciaGanadora = undefined;
+      if (atras) {
+        // Redirige a localhost
+        window.location.href = "http://localhost/";
+      }
     },
     girarAlumnos() {
       this.etapaRuleta = 'alumnos';
-      this.incidenciaGanadora = this.lastWinner;
+      this.incidenciaGanadora = this.incidenciaGanadora ?? this.lastWinner;
       this.items = this.alumnosGrupo.map(alumno => ({
         htmlContent: alumno,
         name: alumno,
@@ -343,7 +358,7 @@ export default {
       return this.alumnos.grupos[grupo] || [];
     },
     girarGrupos() {
-      const nuevosGrupos=this.getGruposRandom(this.gruposSeleccionados);
+      const nuevosGrupos = this.getGruposRandom(this.gruposSeleccionados);
       this.alumnosSeleccionados.push(this.lastWinner);
       console.log("Alumno seleccionado:", this.lastWinner);
       this.etapaRuleta = 'grupos';
@@ -360,15 +375,16 @@ export default {
       }
       return Object.keys(toRaw(this.alumnos.grupos) || this.alumnos.grupos);
     },
-    getGruposRandom(){
+    getGruposRandom() {
       if (!this.alumnos || !this.alumnos.grupos) {
         return [];
       }
       //retorna todos los grupos menos los elementos de gruposSeleccionados
       return Object.keys(this.alumnos.grupos).filter(g => !this.gruposSeleccionados.includes(g));
     },
-    subirDatos() {
+    subirDatos(alumno) {
       // Lógica para subir los datos al servidor
+      /*
       let incidenciaValida = false;
       for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
         if (incidencia.name === this.lastWinner) {
@@ -381,12 +397,15 @@ export default {
         incidenciaValida = this.incidenciaGanadora;
         this.alumnosSeleccionados.push(this.lastWinner);
       }
+      */ // Despues revisar arrays con alumnos y grupos infinitos
       if (!this.grupoSeleccionado) {
         console.error("Error: No se ha seleccionado un grupo.");
         return;
       }
-      if (!this.alumnoSeleccionado) {
-        //this.alumnoSeleccionado = "grupo";
+      if (alumno) {
+        this.alumnosSeleccionados.push(this.lastWinner); // Asigna lastWinner como alumno
+      } else {
+        this.incidenciaGanadora = this.lastWinner; // Asigna lastWinner como incidencia ganadora
       }
       if (!this.comentario) {
         this.comentario = "Sin comentario";
@@ -394,7 +413,7 @@ export default {
       const data = {
         fecha: new Date().toLocaleString(),
         categoria: this.categoriaSorteada,
-        incidencia: this.lastWinner,
+        incidencia: this.incidenciaGanadora,
         grupo: this.gruposSeleccionados[0],
         alumno: this.alumnosSeleccionados[0] || this.alumnoSeleccionado,
         mensaje: this.comentario,
@@ -422,6 +441,7 @@ export default {
         .catch((error) => {
           console.error("Error al enviar los datos:", error);
         });
+      this.reiniciar(false); // Reinicia la ruleta después de subir los datos
     },
     girarRuleta() {
       if (!this.grupoSeleccionado || !this.getGrupos().includes(this.grupoSeleccionado)) {
