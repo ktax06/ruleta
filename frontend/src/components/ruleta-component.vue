@@ -87,7 +87,7 @@
               <button class="btn btn-outline-primary me-2" @click="girarGrupos">
                 <i class="bi bi-people"></i> Girar grupos
               </button>
-              <button class="btn btn-outline-success" @click="reiniciar">
+              <button class="btn btn-outline-success" @click="subirDatos">
                 <i class="bi bi-check2-circle"></i> Registrar
               </button>
             </div>
@@ -112,6 +112,23 @@
           </div>
         </div>
       </transition>
+      <transition name="fade-dialog">
+        <div v-if="showNoGroupsDialog" class="dialog-overlay">
+          <div class="dialog-card text-center">
+            <h3 class="text-danger mb-3"><i class="bi bi-emoji-frown"></i> ¡Ya no quedan grupos por sortear!</h3>
+            <p class="mb-4">Puedes reiniciar el sorteo o salir.</p>
+            <div class="d-flex justify-content-center gap-3">
+              <button class="btn btn-secondary" @click="salir">
+                <i class="bi bi-box-arrow-left"></i> Salir
+              </button>
+              <button class="btn btn-primary" @click="reiniciarCompletamente">
+                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
+
     </div>
     <!-- Columna de la lista -->
     <div class="col-lg-6">
@@ -175,6 +192,7 @@ export default {
   data() {
     const gruposRaw = Object.keys(toRaw(this.alumnos.grupos));
     return {
+      showNoGroupsDialog: false,
       colorIndex: 0,
       mostrarError: false,
       gruposOriginales: gruposRaw,
@@ -208,18 +226,21 @@ export default {
         if (resultIndex !== null) {
           this.lastWinner = resultIndex.name;
           switch (this.etapaRuleta) {
-            case 'categorias':
+            case 'categorias':{
               this.showDialogCat = true;
               break;
+            }
             case 'incidencias':
               this.showDialogInc = true;
               break;
             case 'alumnos':
               this.showDialogAlumno = true;
               break;
-            case 'grupos':
+            case 'grupos':{
+              
               this.showDialogGrupoRandom = true;
               break;
+            } 
           }
         }
         this.$refs.wheel.reset();
@@ -313,7 +334,8 @@ export default {
       this.grupoSeleccionado = "";
       this.gruposSeleccionados = [];
       this.alumnosSeleccionados = [];
-      this.alumnoSeleccionado = "grupo"; // Por defecto, afecta a todo el grupo
+      this.alumnoSeleccionado = "grupo";
+      
     },
     girarAlumnos() {
       this.etapaRuleta = 'alumnos';
@@ -368,78 +390,121 @@ export default {
       return Object.keys(this.alumnos.grupos).filter(g => !this.gruposSeleccionados.includes(g));
     },
     subirDatos() {
-      // Lógica para subir los datos al servidor
-      let incidenciaValida = false;
-      for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
-        if (incidencia.name === this.lastWinner) {
-          incidenciaValida = true;
-          break;
-        }
-      }
-      if (!incidenciaValida) {
-        console.error("Error: La incidencia ganadora no es válida.");
-        incidenciaValida = this.incidenciaGanadora;
-        this.alumnosSeleccionados.push(this.lastWinner);
-      }
-      if (!this.grupoSeleccionado) {
-        console.error("Error: No se ha seleccionado un grupo.");
+      if (this.grupos.length == 0) {
+        this.showNoGroupsDialog = true;
         return;
-      }
-      if (!this.alumnoSeleccionado) {
-        //this.alumnoSeleccionado = "grupo";
-      }
-      if (!this.comentario) {
-        this.comentario = "Sin comentario";
-      }
-      const data = {
-        fecha: new Date().toLocaleString(),
-        categoria: this.categoriaSorteada,
-        incidencia: this.lastWinner,
-        grupo: this.gruposSeleccionados[0],
-        alumno: this.alumnosSeleccionados[0] || this.alumnoSeleccionado,
-        mensaje: this.comentario,
-      };
-      console.log("Grupo seleccionado: ", data["grupo"]);
-      console.log("Alumno seleccionado: ", data["alumno"]);
-      console.log("alumnos[0]:", this.alumnosSeleccionados[0]);
-      console.log("alumno:", this.alumnoSeleccionado);
-      fetch("/api/subir/sorteo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Error en la respuesta del servidor");
+      } else {
+        // Lógica para subir los datos al servidor
+        let incidenciaValida = false;
+        for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
+          if (incidencia.name === this.lastWinner) {
+            incidenciaValida = true;
+            break;
           }
-          return response.json();
+        }
+        if (!incidenciaValida) {
+          console.error("Error: La incidencia ganadora no es válida.");
+          incidenciaValida = this.incidenciaGanadora;
+          this.alumnosSeleccionados.push(this.lastWinner);
+        }
+        if (!this.grupoSeleccionado) {
+          console.error("Error: No se ha seleccionado un grupo.");
+          return;
+        }
+        if (!this.alumnoSeleccionado) {
+          //this.alumnoSeleccionado = "grupo";
+        }
+        if (!this.comentario) {
+          this.comentario = "Sin comentario";
+        }
+        
+        const data = {
+          fecha: new Date().toLocaleString(),
+          categoria: this.categoriaSorteada,
+          incidencia: this.lastWinner,
+          grupo: this.gruposSeleccionados[0],
+          alumno: this.alumnosSeleccionados[0] || this.alumnoSeleccionado,
+          mensaje: this.comentario,
+        };
+        console.log("Grupo seleccionado: ", data["grupo"]);
+        console.log("Alumno seleccionado: ", data["alumno"]);
+        console.log("alumnos[0]:", this.alumnosSeleccionados[0]);
+        console.log("alumno:", this.alumnoSeleccionado);
+        fetch("/api/subir/sorteo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         })
-        .then((data) => {
-          console.log("Datos enviados correctamente:", data);
-        })
-        .catch((error) => {
-          console.error("Error al enviar los datos:", error);
-        });
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Error en la respuesta del servidor");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Datos enviados correctamente:", data);
+          })
+          .catch((error) => {
+            console.error("Error al enviar los datos:", error);
+          });
+      }
     },
     girarRuleta() {
-      if (!this.grupoSeleccionado || !this.getGrupos().includes(this.grupoSeleccionado)) {
-        console.error("Error: No se ha seleccionado un grupo válido.");
-        return;
+      if (this.grupos.length == 0) {
+        this.subirDatos();
+        this.showNoGroupsDialog = true;
+      }else{
+        if (!this.grupoSeleccionado || !this.getGrupos().includes(this.grupoSeleccionado)) {
+          console.error("Error: No se ha seleccionado un grupo válido.");
+          return;
+        }
+        this.showDialogGrupo = false;
+        this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
+        this.grupos = this.grupos.filter(grupo => grupo !== this.grupoSeleccionado);
       }
-      this.showDialogGrupo = false;
-      this.alumnosGrupo = this.getAlumnos(this.grupoSeleccionado);
-      this.grupos = this.grupos.filter(grupo => grupo !== this.grupoSeleccionado);
+
     },
     validarSeleccion() {
-      if (!this.grupoSeleccionado) {
-        this.mostrarError = true;
-      } else {
-        this.gruposSeleccionados.push(this.grupoSeleccionado);
-        this.mostrarError = false;
-        this.girarRuleta(); // Llama a tu función original
+      if (this.grupos.length == 0) {
+        this.showNoGroupsDialog = true;
+      }else{
+        if (!this.grupoSeleccionado) {
+          this.mostrarError = true;
+        } else {
+          this.gruposSeleccionados.push(this.grupoSeleccionado);
+          this.mostrarError = false;
+          this.girarRuleta(); // Llama a tu función original
+        }
       }
+      
+    },
+    reiniciarCompletamente(){
+      this.subirDatos();
+      this.etapaRuleta = 'categorias';
+      this.items = this.getCategorias();
+      // Resetear todos los diálogos
+      this.showDialogCat = false;
+      this.showDialogInc = false;
+      this.showDialogAlumno = false;
+      this.showDialogGrupo = true;
+      // Resetear otros estados
+      this.lastWinner = null;
+      this.comentario = "";
+      this.grupoSeleccionado = "";
+      this.gruposSeleccionados = [];
+      this.alumnosSeleccionados = [];
+      this.alumnoSeleccionado = "grupo";
+      this.grupos = [...this.gruposOriginales]; // Reiniciar grupos a su estado original
+      this.showNoGroupsDialog = false; // Cerrar el diálogo de no grupos
+    },
+    salir() {
+      console.log('Saliendo de la ruleta y redireccionando a la página de inicio.');
+      this.subirDatos();
+      this.reiniciarCompletamente();
+      this.showNoGroupsDialog = false;
+      this.$router.push('/');
     },
   },
 };
