@@ -5,7 +5,7 @@
       <Roulette @click="launchWheel" @wheel-start="wheelStartedCallback" @wheel-end="wheelEndedCallback" ref="wheel"
         :items="adjustedItems" :size="500" :result-variation="50" :base-display="true" :base-background="'#EEAA33'"
         :reset-on-end="false" :display-shadow="true" :duration="5" :horizontal-content="true" :counter-clockwise="true"
-        :centered-indicator="true"> <!--Hector: items: "items"-->
+        :centered-indicator="true">
         <template #baseContent>
           <strong>Iniciar</strong>
         </template>
@@ -20,7 +20,8 @@
               <button class="btn btn-outline-primary" @click="girarIncidencias">
                 <i class="bi bi-arrow-repeat"></i> Girar incidencias
               </button>
-              <button class="btn btn-outline-secondary" @click="reiniciar">
+              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
+                <!-- Reinicia y redirige a localhost -->
                 <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
               </button>
             </div>
@@ -48,7 +49,7 @@
               <button class="btn btn-outline-primary" @click="girarAlumnos">
                 <i class="bi bi-person-workspace"></i> Girar alumno
               </button>
-              <button class="btn btn-outline-success" @click="reiniciar">
+              <button class="btn btn-outline-success" @click="subirDatos()">
                 <i class="bi bi-check2-circle"></i> Registrar
               </button>
             </div>
@@ -59,17 +60,25 @@
         <div v-if="showDialogGrupo" class="dialog-overlay">
           <div class="dialog-card">
             <h3 class="mb-3"><i class="bi bi-people"></i> Selecciona un grupo</h3>
-            <select class="form-select mb-4" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
-              @change="mostrarError = false">
-              <option selected disabled value="">Selecciona un grupo</option>
-              <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
-            </select>
-            <div class="invalid-feedback" v-if="mostrarError">
-              Por favor elige un grupo.
+            <div class="m-3">
+              <select class="form-select" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
+                @change="mostrarError = false">
+                <option selected disabled value="">Selecciona un grupo</option>
+                <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
+              </select>
+              <div class="invalid-feedback" v-if="mostrarError">
+                Por favor elige un grupo.
+              </div>
             </div>
-            <button @click="validarSeleccion" class="btn btn-primary w-100">
-              <i class="bi bi-arrow-right-circle"></i> Elegir categoría
-            </button>
+            <div class="d-flex gap-2 justify-content-end">
+              <button @click="validarSeleccion" class="btn btn-primary">
+                <i class="bi bi-arrow-right-circle"></i> Elegir categoría
+              </button>
+              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
+                <!-- Reinicia y redirige a localhost -->
+                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+              </button>
+            </div>
           </div>
         </div>
       </transition>
@@ -78,6 +87,11 @@
           <div class="dialog-card">
             <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Alumno afectado!</h3>
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
+            <div v-if="ifGruposSeleccionados" class="mb-3">
+              <p><strong>Alumnos seleccionados: </strong>{{ alumnosSeleccionados }}</p>
+              <p><strong>Grupos seleccionados: </strong>{{ gruposSeleccionados }}</p>
+              <p>Insertar como comentario para guardar en DB</p>
+            </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Comentario</label>
               <textarea class="form-control" rows="3" v-model="comentario"
@@ -99,11 +113,6 @@
           <div class="dialog-card">
             <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Grupo afectado!</h3>
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Comentario</label>
-              <textarea class="form-control" rows="3" v-model="comentario"
-                placeholder="Escribe tu comentario aquí..."></textarea>
-            </div>
             <div class="d-flex justify-content-end">
               <button class="btn btn-outline-primary me-2" @click="girarAlumnosRandom">
                 <i class="bi bi-person-workspace"></i> Girar alumno
@@ -205,11 +214,11 @@ export default {
       showDialogGrupo: true,
       showDialogAlumno: false,
       showDialogGrupoRandom: false,
-      incidenciaGanadora: '',
+      incidenciaGanadora: null,
       alumnosGrupo: [],
-      //grupos: Object.keys(toRaw(this.alumnos.grupos)),
       grupoSeleccionado: "",
       gruposSeleccionados: [],
+      ifGruposSeleccionados: false,
       alumnosSeleccionados: [],
       items: this.getCategorias(),
       categoriaSorteada: null,
@@ -226,21 +235,24 @@ export default {
         if (resultIndex !== null) {
           this.lastWinner = resultIndex.name;
           switch (this.etapaRuleta) {
-            case 'categorias':{
+            case 'categorias':
+              this.gruposSeleccionados.push(this.grupoSeleccionado);
               this.showDialogCat = true;
               break;
-            }
             case 'incidencias':
+              this.incidenciaGanadora = this.lastWinner;
               this.showDialogInc = true;
               break;
             case 'alumnos':
+              this.alumnosSeleccionados.push(this.lastWinner);
               this.showDialogAlumno = true;
               break;
-            case 'grupos':{
-              
+            case 'grupos':
+              this.gruposSeleccionados.push(this.lastWinner);
+              this.ifGruposSeleccionados = true;
               this.showDialogGrupoRandom = true;
               break;
-            } 
+
           }
         }
         this.$refs.wheel.reset();
@@ -287,7 +299,6 @@ export default {
           ? { ...item, background: newColor || this.getRandomColor() }
           : item
       );
-      //this.$nextTick(() => this.$refs.wheel?.refreshWheel());
     },
     mapeoColor() {
       this.items = this.items.map(item => ({
@@ -319,8 +330,7 @@ export default {
       this.categoriaSorteada = this.lastWinner;
       this.showDialogCat = false;
     },
-    reiniciar() {
-      this.subirDatos();
+    reiniciar(atras) {
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
       // Resetear todos los diálogos
@@ -334,12 +344,17 @@ export default {
       this.grupoSeleccionado = "";
       this.gruposSeleccionados = [];
       this.alumnosSeleccionados = [];
-      this.alumnoSeleccionado = "grupo";
-      
+      this.alumnoSeleccionado = "grupo"; // Por defecto, afecta a todo el grupo
+      this.incidenciaGanadora = undefined;
+      this.ifGruposSeleccionados = false;
+      if (atras) {
+        // Redirige a localhost
+        window.location.href = "http://localhost/";
+      }
     },
     girarAlumnos() {
       this.etapaRuleta = 'alumnos';
-      this.incidenciaGanadora = this.lastWinner;
+      this.incidenciaGanadora = this.incidenciaGanadora ?? this.lastWinner;
       this.items = this.alumnosGrupo.map(alumno => ({
         htmlContent: alumno,
         name: alumno,
@@ -348,7 +363,6 @@ export default {
       this.showDialogInc = false;
     },
     girarAlumnosRandom() {
-      this.gruposSeleccionados.push(this.lastWinner);
       console.log("Grupo seleccionado:", this.lastWinner);
       this.etapaRuleta = 'alumnos';
       this.items = this.getAlumnos(this.lastWinner).map(alumno => ({
@@ -365,8 +379,7 @@ export default {
       return this.alumnos.grupos[grupo] || [];
     },
     girarGrupos() {
-      const nuevosGrupos=this.getGruposRandom(this.gruposSeleccionados);
-      this.alumnosSeleccionados.push(this.lastWinner);
+      const nuevosGrupos = this.getGruposRandom(this.gruposSeleccionados);
       console.log("Alumno seleccionado:", this.lastWinner);
       this.etapaRuleta = 'grupos';
       this.items = nuevosGrupos.map(grupo => ({
@@ -382,7 +395,7 @@ export default {
       }
       return Object.keys(toRaw(this.alumnos.grupos) || this.alumnos.grupos);
     },
-    getGruposRandom(){
+    getGruposRandom() {
       if (!this.alumnos || !this.alumnos.grupos) {
         return [];
       }
@@ -393,43 +406,23 @@ export default {
       if (this.grupos.length == 0) {
         this.showNoGroupsDialog = true;
         return;
-      } else {
-        // Lógica para subir los datos al servidor
-        let incidenciaValida = false;
-        for (let incidencia of this.getIncidencias(this.categoriaSorteada)) {
-          if (incidencia.name === this.lastWinner) {
-            incidenciaValida = true;
-            break;
-          }
-        }
-        if (!incidenciaValida) {
-          console.error("Error: La incidencia ganadora no es válida.");
-          incidenciaValida = this.incidenciaGanadora;
-          this.alumnosSeleccionados.push(this.lastWinner);
-        }
-        if (!this.grupoSeleccionado) {
-          console.error("Error: No se ha seleccionado un grupo.");
-          return;
-        }
-        if (!this.alumnoSeleccionado) {
-          //this.alumnoSeleccionado = "grupo";
-        }
-        if (!this.comentario) {
-          this.comentario = "Sin comentario";
-        }
-        
-        const data = {
-          fecha: new Date().toLocaleString(),
-          categoria: this.categoriaSorteada,
-          incidencia: this.lastWinner,
-          grupo: this.gruposSeleccionados[0],
-          alumno: this.alumnosSeleccionados[0] || this.alumnoSeleccionado,
-          mensaje: this.comentario,
-        };
-        console.log("Grupo seleccionado: ", data["grupo"]);
-        console.log("Alumno seleccionado: ", data["alumno"]);
-        console.log("alumnos[0]:", this.alumnosSeleccionados[0]);
-        console.log("alumno:", this.alumnoSeleccionado);
+      }
+      // Lógica para subir los datos al servidor
+      if (!this.grupoSeleccionado) {
+        console.error("Error: No se ha seleccionado un grupo.");
+        return;
+      }
+      if (!this.comentario) {
+        this.comentario = "Sin comentario";
+      }
+      const data = {
+        fecha: new Date().toLocaleString(),
+        categoria: this.categoriaSorteada,
+        incidencia: this.incidenciaGanadora,
+        grupo: this.gruposSeleccionados[0],
+        alumno: this.alumnosSeleccionados[0] || this.alumnoSeleccionado,
+        mensaje: this.comentario,
+      };
         fetch("/api/subir/sorteo", {
           method: "POST",
           headers: {
@@ -449,13 +442,13 @@ export default {
           .catch((error) => {
             console.error("Error al enviar los datos:", error);
           });
-      }
+        this.reiniciar(false); // Reinicia la ruleta después de subir los datos
     },
     girarRuleta() {
       if (this.grupos.length == 0) {
         this.subirDatos();
         this.showNoGroupsDialog = true;
-      }else{
+      } else {
         if (!this.grupoSeleccionado || !this.getGrupos().includes(this.grupoSeleccionado)) {
           console.error("Error: No se ha seleccionado un grupo válido.");
           return;
@@ -469,7 +462,7 @@ export default {
     validarSeleccion() {
       if (this.grupos.length == 0) {
         this.showNoGroupsDialog = true;
-      }else{
+      } else {
         if (!this.grupoSeleccionado) {
           this.mostrarError = true;
         } else {
@@ -478,9 +471,8 @@ export default {
           this.girarRuleta(); // Llama a tu función original
         }
       }
-      
     },
-    reiniciarCompletamente(){
+    reiniciarCompletamente() {
       this.subirDatos();
       this.etapaRuleta = 'categorias';
       this.items = this.getCategorias();
