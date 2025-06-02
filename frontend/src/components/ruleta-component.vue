@@ -181,6 +181,7 @@
 import { Roulette } from "vue3-roulette";
 import draggable from "vuedraggable";
 import { toRaw } from 'vue';
+import router from "@/router";
 
 export default {
   name: "RuletaComponent",
@@ -348,8 +349,7 @@ export default {
       this.incidenciaGanadora = undefined;
       this.ifGruposSeleccionados = false;
       if (atras) {
-        // Redirige a localhost
-        window.location.href = "http://localhost/";
+        this.$router.push('/'); // Redirige a la página de inicio
       }
     },
     girarAlumnos() {
