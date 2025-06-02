@@ -466,7 +466,6 @@ export default {
         if (!this.grupoSeleccionado) {
           this.mostrarError = true;
         } else {
-          this.gruposSeleccionados.push(this.grupoSeleccionado);
           this.mostrarError = false;
           this.girarRuleta(); // Llama a tu función original
         }
