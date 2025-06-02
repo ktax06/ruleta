@@ -181,7 +181,6 @@
 import { Roulette } from "vue3-roulette";
 import draggable from "vuedraggable";
 import { toRaw } from 'vue';
-import router from "@/router";
 
 export default {
   name: "RuletaComponent",
