@@ -5,7 +5,7 @@ events {}
 
 http {
     upstream frontend {
-        server frontend:${FRONTEND_PORT};
+        server frontend:80;
     }
 
     upstream backend {
