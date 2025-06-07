@@ -402,10 +402,6 @@ export default {
       return Object.keys(this.alumnos.grupos).filter(g => !this.gruposSeleccionados.includes(g));
     },
     subirDatos() {
-      if (this.grupos.length == 0) {
-        this.showNoGroupsDialog = true;
-        return;
-      }
       // Lógica para subir los datos al servidor
       if (!this.grupoSeleccionado) {
         console.error("Error: No se ha seleccionado un grupo.");
@@ -442,6 +438,12 @@ export default {
             console.error("Error al enviar los datos:", error);
           });
         this.reiniciar(false); // Reinicia la ruleta después de subir los datos
+        if (this.grupos.length == 0) {
+          this.showNoGroupsDialog = true;
+          this.showDialogInc = false;
+          this.showDialogGrupo = false;
+          return;
+        }
     },
     girarRuleta() {
       if (this.grupos.length == 0) {

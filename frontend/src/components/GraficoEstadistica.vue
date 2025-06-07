@@ -1,14 +1,16 @@
 <template>
   <div>
     <h5 class="mb-3">{{ titulo }}</h5>
-    <Bar
-      v-if="tipo === 'bar'"
-      :data="chartData"
-      :options="chartOptions"
-      :plugins="[datalabels]"
-      height="250"
-    />
-    <div v-if="tipo === 'bar'" class="mt-3">
+    <div class="grafico-barra-wrapper" v-if="tipo === 'bar'">
+      <Bar
+        :data="chartData"
+        :options="chartOptions"
+        :plugins="[datalabels]"
+        :height="300"
+        :width="600"
+      />
+    </div>
+    <div v-if="tipo === 'bar'" class="mt-3 leyenda-barra">
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <span
           v-for="(label, i) in datos.x"
@@ -25,7 +27,7 @@
       :data="chartData"
       :options="pieOptions"
       :plugins="[datalabels]"
-      height="250"
+      :height="300"
     />
   </div>
 </template>
@@ -87,6 +89,7 @@ export default {
       const total = this.datos.y.reduce((a, b) => a + b, 0)
       return {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: { enabled: true },
@@ -104,7 +107,7 @@ export default {
         },
         scales: {
           x: {
-            display: false // Oculta los labels del eje X
+            display: false
           },
           y: { beginAtZero: true, ticks: { color: '#333' } }
         }
@@ -135,3 +138,20 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.grafico-barra-wrapper {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  /* Permite que el gráfico crezca horizontalmente si hay muchas barras */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 320px; /* Ajusta según tu preferencia */
+}
+.leyenda-barra {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+</style>
