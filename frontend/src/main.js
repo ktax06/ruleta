@@ -10,6 +10,8 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
+import RuletaHeader from './components/ruleta-header.vue';
+import ruletaFooter from './components/ruleta-footer.vue';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -17,7 +19,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'primevue/resources/themes/saga-blue/theme.css';
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
-import RuletaHeader from './components/ruleta-header.vue';
 
 const app = createApp(App);
 
@@ -37,6 +38,7 @@ app.use(PrimeVue, {
 });
 app.component('DataTable', DataTable);
 app.component("RuletaHeader", RuletaHeader);
+app.component("RuletaFooter", ruletaFooter);
 app.component('Column', Column); // eslint-disable-line vue/multi-word-component-names
 app.component('InputText', InputText);
 app.component('IconField', IconField);

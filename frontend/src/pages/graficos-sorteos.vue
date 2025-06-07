@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5">
+  <div class="container">
     <h1 class="mb-4">Gráficos de Sorteos</h1>
     <div v-if="loading" class="text-center my-5">
       <div class="spinner-border text-primary" role="status"></div>
