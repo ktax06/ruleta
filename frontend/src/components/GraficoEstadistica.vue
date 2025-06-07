@@ -1,9 +1,8 @@
 <template>
   <div>
     <h5 class="mb-3">{{ titulo }}</h5>
-    <div class="grafico-barra-wrapper">
+    <div class="grafico-barra-wrapper" v-if="tipo === 'bar'">
       <Bar
-        v-if="tipo === 'bar'"
         :data="chartData"
         :options="chartOptions"
         :plugins="[datalabels]"
