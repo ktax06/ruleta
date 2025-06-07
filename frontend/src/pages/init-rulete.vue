@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid mx-5 my-0">
+  <div class="container-fluid py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div class="card  border-1">
@@ -537,9 +537,6 @@ export default {
 </script>
 
 <style>
-body {
-  overflow-x: hidden;
-}
 .card {
   border-radius: 14px;
 }

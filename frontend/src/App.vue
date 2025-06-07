@@ -2,9 +2,7 @@
    <header class="shadow-sm bg-primary text-white fixed-top">
     <RuletaHeader />
   </header>
-  <section>
-    <router-view />
-  </section>
+  <router-view />
 </template>
 
 <script>
