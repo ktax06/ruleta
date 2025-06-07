@@ -18,6 +18,20 @@
 
 <script>
 import { Bar, Pie } from 'vue-chartjs'
+import { Chart, BarElement, BarController, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement, PieController } from 'chart.js'
+
+Chart.register(
+  BarElement,
+  BarController,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PieController
+);
+
 export default {
   name: 'GraficoEstadistica',
   components: { Bar, Pie },
