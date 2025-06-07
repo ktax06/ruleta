@@ -84,7 +84,7 @@ nav .nav-link:hover {
 }
 .dropdown-menu-mobile {
   position: absolute;
-  top: 60px;
+  top: var(--header-height);
   right: 16px;
   background: #222;
   border-radius: 0.5rem;
