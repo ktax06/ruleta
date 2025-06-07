@@ -1,62 +1,63 @@
 <template>
-  <header class="shadow-sm bg-primary text-white">
-    <div class="container-fluid py-3 d-flex align-items-center justify-content-between flex-wrap">
-      <div class="d-flex align-items-center gap-3 mb-2 mb-md-0">
-        <i class="pi pi-spin pi-star-fill display-6 text-warning"></i>
-        <h1 class="h3 mb-0 fw-bold">Ruleta de Sorteos</h1>
+  <header class="shadow-sm border-bottom fixed-top header-gradient">
+    <nav class="container-fluid py-2 d-flex align-items-center justify-content-between flex-wrap">
+      <!-- Logo y título -->
+      <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
+        <img src="@/assets/ruleta.png" alt="Logo Ruleta" class="img-fluid" style="width: 40px; height: 40px;">
+        <span class="h5 mb-0 fw-bold text-white">Ruleta de Sorteos</span>
       </div>
-      <div class="d-flex align-items-center gap-3">
-        <Button icon="pi pi-bell" class="p-button-rounded p-button-warning" aria-label="Notificaciones" />
-        <Dropdown
-          :options="userOptions"
-          optionLabel="label"
-          placeholder="Usuario"
-          class="p-dropdown-sm"
-          v-model="selectedOption"
-        >
-          <template #value="slotProps">
-            <Avatar icon="pi pi-user" shape="circle" class="me-2" />
-            <span>{{ slotProps.value ? slotProps.value.label : 'Usuario' }}</span>
-          </template>
-        </Dropdown>
-      </div>
-    </div>
+      <!-- Navegación principal -->
+      <ul class="nav gap-2 flex-nowrap align-items-center mb-2 mb-md-0">
+        <li class="nav-item">
+          <router-link to="/" class="nav-link text-white fw-semibold px-3">Inicio</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/graficos" class="nav-link text-white fw-semibold px-3">Gráficos</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/historial" class="nav-link text-white fw-semibold px-3">Historial</router-link>
+        </li>
+      </ul>
+    </nav>
   </header>
 </template>
 
 <script>
-import { Button } from 'primevue/button';
-import { Dropdown } from 'primevue/dropdown';
-import { Avatar } from 'primevue/avatar';
-
 export default {
   name: 'RuletaHeader',
-  components: {
-    Button,
-    Dropdown,
-    Avatar
-  },
+  components: {},
   data() {
-    return {
-      userOptions: [
-        { label: 'Perfil', value: 'profile' },
-        { label: 'Configuración', value: 'settings' },
-        { label: 'Cerrar sesión', value: 'logout' }
-      ],
-      selectedOption: null
-    };
+    return {};
   }
 };
 </script>
 
 <style>
-header {
+.header-gradient {
   background: linear-gradient(90deg, #1976d2 0%, #43e97b 100%);
+  border-bottom: 1px solid #dee2e6;
+  z-index: 1030;
 }
-h1 {
-  letter-spacing: 1px;
+.text-accent {
+  color: #43e97b;
 }
-.p-dropdown {
-  min-width: 140px;
+.h5, .fw-bold {
+  letter-spacing: 0.5px;
+}
+nav ul.nav {
+  margin-bottom: 0;
+}
+nav .nav-link {
+  transition: background 0.2s, color 0.2s;
+  border-radius: 0.5rem;
+}
+nav .nav-link.router-link-exact-active,
+nav .nav-link.router-link-active {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+nav .nav-link:hover {
+  background: rgba(0,0,0,0.18);
+  color: #fff !important;
 }
 </style>

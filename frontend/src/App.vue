@@ -1,8 +1,10 @@
 <template>
-  <div>
+   <header class="shadow-sm bg-primary text-white fixed-top">
     <RuletaHeader />
+  </header>
+  <section>
     <router-view />
-  </div>
+  </section>
 </template>
 
 <script>
@@ -14,3 +16,16 @@ export default {
   }
 };
 </script>
+<style>
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; 
+}
+body {
+  padding-top: 80px;
+}
+
+</style>
