@@ -2,7 +2,7 @@
   <footer class="footer-gradient text-white py-3 mt-auto">
     <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
       <div class="mb-2 mb-md-0">
-        <span class="fw-bold">Ruleta de Sorteos</span> &copy; {{ new Date().getFullYear() }}
+        <span class="fw-bold">Ruleta de Sorteos</span> &copy; {{ year }}
       </div>
       <div>
         <a
