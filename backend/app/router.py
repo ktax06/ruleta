@@ -47,6 +47,6 @@ def get_estadisticas():
     if data is None:
         return jsonify({'error': 'No se encontraron estadísticas'}), 404
     current_app.logger.info("Estadísticas obtenidas correctamente")
-    return jsonify(data), 200
+    return data, 200
     
     
