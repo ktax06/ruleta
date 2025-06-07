@@ -112,7 +112,6 @@
 </template>
 <script>
 import { nextTick } from 'vue';
-import { FilterMatchMode } from 'primevue/api';
 import ExcelJS from 'exceljs';
 
 export default {
@@ -122,14 +121,15 @@ export default {
       sorteos: [],
       exportandoExcel: false,
       filters: {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        alumno: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        categoria: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        incidencia: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        grupo: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        mensaje: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        fecha: { value: [], matchMode: FilterMatchMode.BETWEEN }
+        global: { value: null, matchMode: 'contains' },
+        alumno: { value: null, matchMode: 'contains' },
+        categoria: { value: null, matchMode: 'contains' },
+        incidencia: { value: null, matchMode: 'contains' },
+        grupo: { value: null, matchMode: 'contains' },
+        mensaje: { value: null, matchMode: 'contains' },
+        fecha: { value: [], matchMode: 'between' }
       },
+      loading: false
     };
   },
   created() {
@@ -146,7 +146,6 @@ export default {
           return;
         }
         const data = await res.json();
-        // Convierte cada fecha a Date
         this.sorteos = data.map(s => ({
           ...s,
           fecha: s.fecha ? new Date(s.fecha) : null
@@ -159,9 +158,8 @@ export default {
       }
     },
     formatFecha(fechaStr) {
-      if (!fechaStr) return ''; // Manejar fechas nulas o indefinidas
+      if (!fechaStr) return '';
       const fecha = new Date(fechaStr);
-      // Verifica si la fecha es válida, ya que new Date(undefined) o new Date(null) pueden dar 'Invalid Date'
       if (isNaN(fecha.getTime())) {
           return 'Fecha inválida';
       }
@@ -173,19 +171,17 @@ export default {
       });
     },
     async limpiarFiltros() {
-      // Cierra el popup del Calendar si está abierto
       if (this.$refs.calendarFiltroFecha && this.$refs.calendarFiltroFecha.hide) {
         this.$refs.calendarFiltroFecha.hide();
-        await nextTick(); // Espera a que el DOM se actualice
+        await nextTick();
       }
-      // Ahora limpia los filtros
       this.filters.global.value = null;
       this.filters.alumno.value = null;
       this.filters.categoria.value = null;
       this.filters.incidencia.value = null;
       this.filters.grupo.value = null;
       this.filters.mensaje.value = null;
-      this.filters.fecha.value = []; 
+      this.filters.fecha.value = [];
     },
     async exportarExcel() {
       this.exportandoExcel = true;
@@ -217,7 +213,6 @@ export default {
           });
         });
       
-        // Gráficos: datos para Excel
         const categorias = {};
         datos.forEach(row => {
           categorias[row.categoria] = (categorias[row.categoria] || 0) + 1;
@@ -230,16 +225,15 @@ export default {
           chartSheet.addRow([cat, count]);
         });
       
-        // Descarga segura
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'sorteos.xlsx';
-        document.body.appendChild(link); // <-- Añade el enlace al DOM
+        document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link); // <-- Remueve el enlace después
-        URL.revokeObjectURL(link.href); // <-- Libera el recurso
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
       } catch (error) {
         console.error("Error al exportar a Excel:", error);
       } finally {
