@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid mx-5 py-5">
+  <div class="container-fluid py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div class="card  border-1">
@@ -175,14 +175,10 @@
         </div>
       </div>
     </div>
-    <div class="row mx-5 my-5">
-      <TablaSorteos/>
-    </div>
   </div>
 </template>
 
 <script>
-import TablaSorteos from '@/components/tabla-sorteos.vue';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 
@@ -215,9 +211,6 @@ export default {
         this.alumnosPreview = [{ Grupo: '', Integrante: '' }];
       }
     }
-  },
-  components: {
-    TablaSorteos,
   },
   methods: {
     handleFileChange(type, event) {
