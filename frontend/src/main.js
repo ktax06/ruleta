@@ -44,7 +44,7 @@ app.component('InputText', InputText);
 app.component('IconField', IconField);
 app.component('InputIcon', InputIcon);
 app.component('Calendar', Calendar); // eslint-disable-line vue/multi-word-component-names
-app.component('Button', Button); // eslint-disable-line vue/multi-word-component-names
+app.component('PButton', Button); // eslint-disable-line vue/multi-word-component-names
 app.component("roulette", Roulette); // eslint-disable-line vue/multi-word-component-names
 app.use(router);
 app.mount('#app');

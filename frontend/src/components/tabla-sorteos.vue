@@ -19,7 +19,7 @@
             <h5 class="mb-0 fw-bold">
               <i class="pi pi-list"></i> Sorteos realizados
             </h5>
-            <button
+            <PButton
               @click="exportarExcel"
               class="btn btn-success d-flex align-items-center gap-2"
               :disabled="exportandoExcel"
@@ -28,7 +28,7 @@
               <span>{{ exportandoExcel ? 'Exportando...' : 'Exportar' }}</span>
               <span v-if="exportandoExcel" class="pi pi-spin pi-spinner"></span>
               <span v-else class="pi pi-file-excel"></span>
-            </button>
+            </PButton>
           </div>
         </template>
         <template #empty>

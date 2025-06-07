@@ -91,27 +91,27 @@
                   <i class="bi bi-people"></i> Subir archivo de alumnos
                 </label>
                 <div class="input-group">
-                  <button type="button" class="btn btn-outline-secondary" @click="triggerFileInput('alumnosInput')">
+                  <PButton type="button" class="btn btn-outline-secondary" @click="triggerFileInput('alumnosInput')">
                     <i class="bi bi-upload"></i> Seleccionar archivo
-                  </button>
+                  </PButton>
                   <input type="text" class="form-control bg-light" :value="files.alumnos ? files.alumnos.name : 'No se ha seleccionado ningún archivo'" readonly />
                   <input type="file" accept=".csv" class="form-control d-none" @change="handleFileChange('alumnos', $event)" ref="alumnosInput" />
-                  <button type="button" class="btn btn-outline-success" @click="exportFile('alumnos')" title="Exportar">
+                  <PButton type="button" class="btn btn-outline-success" @click="exportFile('alumnos')" title="Exportar">
                     <i class="bi bi-download"></i>
-                  </button>
+                  </PButton>
                 </div>
                 <!-- Preview alumnos -->
                 <div class="mt-2">
                   <div class="d-flex justify-content-between align-items-center">
                     <label class="form-label fw-bold mb-0">Vista previa alumnos:</label>
                     <div>
-                      <button type="button" class="btn btn-sm btn-success me-1" @click="addAlumnoRow" title="Agregar fila">
+                      <PButton type="button" class="btn btn-sm btn-success me-1" @click="addAlumnoRow" title="Agregar fila">
                         <i class="bi bi-plus"></i>
-                      </button>
-                      <button type="button" class="btn btn-sm btn-outline-primary" @click="showAlumnosPreview = !showAlumnosPreview">
+                      </PButton>
+                      <PButton type="button" class="btn btn-sm btn-outline-primary" @click="showAlumnosPreview = !showAlumnosPreview">
                         <i class="bi" :class="showAlumnosPreview ? 'bi-eye-slash' : 'bi-eye'"></i>
                         {{ showAlumnosPreview ? 'Ocultar' : 'Mostrar' }}
-                      </button>
+                      </PButton>
                     </div>
                   </div>
                   <transition name="fade">
@@ -129,9 +129,9 @@
                             <td><input v-model="row.Grupo" class="form-control form-control-sm" placeholder="Grupo" /></td>
                             <td><input v-model="row.Integrante" class="form-control form-control-sm" placeholder="Integrante" /></td>
                             <td>
-                              <button type="button" class="btn btn-sm btn-danger" @click="removeAlumnoRow(idx)" v-if="alumnosPreview.length > 1" title="Eliminar fila">
+                              <PButton type="button" class="btn btn-sm btn-danger" @click="removeAlumnoRow(idx)" v-if="alumnosPreview.length > 1" title="Eliminar fila">
                                 <i class="bi bi-trash"></i>
-                              </button>
+                              </PButton>
                             </td>
                           </tr>
                         </tbody>

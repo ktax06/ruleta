@@ -17,13 +17,13 @@
             <h3 class="text-success mb-3"><i class="bi bi-award"></i> ¡Categoría ganadora!</h3>
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
             <div class="d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-primary" @click="girarIncidencias">
+              <PButton class="btn btn-outline-primary" @click="girarIncidencias">
                 <i class="bi bi-arrow-repeat"></i> Girar incidencias
-              </button>
-              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
+              </PButton>
+              <PButton class="btn btn-outline-secondary" @click="reiniciar(true)">
                 <!-- Reinicia y redirige a localhost -->
                 <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
-              </button>
+              </PButton>
             </div>
           </div>
         </div>
@@ -46,12 +46,12 @@
                 placeholder="Escribe tu comentario aquí..."></textarea>
             </div>
             <div class="d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-primary" @click="girarAlumnos">
+              <PButton class="btn btn-outline-primary" @click="girarAlumnos">
                 <i class="bi bi-person-workspace"></i> Girar alumno
-              </button>
-              <button class="btn btn-outline-success" @click="subirDatos()">
+              </PButton>
+              <PButton class="btn btn-outline-success" @click="subirDatos()">
                 <i class="bi bi-check2-circle"></i> Registrar
-              </button>
+              </PButton>
             </div>
           </div>
         </div>
@@ -71,13 +71,13 @@
               </div>
             </div>
             <div class="d-flex gap-2 justify-content-end">
-              <button @click="validarSeleccion" class="btn btn-primary">
+              <PButton @click="validarSeleccion" class="btn btn-primary">
                 <i class="bi bi-arrow-right-circle"></i> Elegir categoría
-              </button>
-              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
+              </PButton>
+              <PButton class="btn btn-outline-secondary" @click="reiniciar(true)">
                 <!-- Reinicia y redirige a localhost -->
                 <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
-              </button>
+              </PButton>
             </div>
           </div>
         </div>
@@ -98,12 +98,12 @@
                 placeholder="Escribe tu comentario aquí..."></textarea>
             </div>
             <div class="d-flex justify-content-end">
-              <button class="btn btn-outline-primary me-2" @click="girarGrupos">
+              <PButton class="btn btn-outline-primary me-2" @click="girarGrupos">
                 <i class="bi bi-people"></i> Girar grupos
-              </button>
-              <button class="btn btn-outline-success" @click="subirDatos">
+              </PButton>
+              <PButton class="btn btn-outline-success" @click="subirDatos">
                 <i class="bi bi-check2-circle"></i> Registrar
-              </button>
+              </PButton>
             </div>
           </div>
         </div>
@@ -114,9 +114,9 @@
             <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Grupo afectado!</h3>
             <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
             <div class="d-flex justify-content-end">
-              <button class="btn btn-outline-primary me-2" @click="girarAlumnosRandom">
+              <PButton class="btn btn-outline-primary me-2" @click="girarAlumnosRandom">
                 <i class="bi bi-person-workspace"></i> Girar alumno
-              </button>
+              </PButton>
             </div>
           </div>
         </div>
@@ -127,12 +127,12 @@
             <h3 class="text-danger mb-3"><i class="bi bi-emoji-frown"></i> ¡Ya no quedan grupos por sortear!</h3>
             <p class="mb-4">Puedes reiniciar el sorteo o salir.</p>
             <div class="d-flex justify-content-center gap-3">
-              <button class="btn btn-secondary" @click="salir">
+              <PButton class="btn btn-secondary" @click="salir">
                 <i class="bi bi-box-arrow-left"></i> Salir
-              </button>
-              <button class="btn btn-primary" @click="reiniciarCompletamente">
+              </PButton>
+              <PButton class="btn btn-primary" @click="reiniciarCompletamente">
                 <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
-              </button>
+              </PButton>
             </div>
           </div>
         </div>
@@ -154,10 +154,10 @@
             <template #item="{ element, index }">
               <li class="list-group-item d-flex align-items-center px-4 py-3">
                 <div class="d-flex align-items-center flex-grow-1 gap-3">
-                  <button class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
+                  <PButton class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
                     @click="toggleVisibility(index)">
                     <i :class="element.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
-                  </button>
+                  </PButton>
 
                   <input type="text" class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
                     v-model="element.htmlContent" @input="updateItem(index, $event.target.value)"
