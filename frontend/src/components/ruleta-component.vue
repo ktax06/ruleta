@@ -1,176 +1,214 @@
 <template>
-  <div class="row g-5 px-4 py-3">
-    <!-- Columna de la ruleta -->
-    <div class="col-lg-6 mb-4 position-relative">
-      <Roulette @click="launchWheel" @wheel-start="wheelStartedCallback" @wheel-end="wheelEndedCallback" ref="wheel"
-        :items="adjustedItems" :size="500" :result-variation="50" :base-display="true" :base-background="'#EEAA33'"
-        :reset-on-end="false" :display-shadow="true" :duration="5" :horizontal-content="true" :counter-clockwise="true"
-        :centered-indicator="true">
-        <template #baseContent>
-          <strong>Iniciar</strong>
-        </template>
-      </Roulette>
-      <!-- Diálogos animados -->
-      <transition name="fade-dialog">
-        <div v-if="showDialogCat" class="dialog-overlay">
-          <div class="dialog-card">
-            <h3 class="text-success mb-3"><i class="bi bi-award"></i> ¡Categoría ganadora!</h3>
-            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
-            <div class="d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-primary" @click="girarIncidencias">
-                <i class="bi bi-arrow-repeat"></i> Girar incidencias
-              </button>
-              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
-                <!-- Reinicia y redirige a localhost -->
-                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
-              </button>
-            </div>
+  <div class="container-fluid px-1 px-sm-2 px-md-4 py-2 py-md-3">
+    <div class="row g-2 g-md-3 g-lg-5">
+      <!-- Columna de la ruleta -->
+      <div class="col-12 col-xl-6 mb-3 mb-xl-4 position-relative">
+        <div class="d-flex justify-content-center align-items-center min-vh-50">
+          <div class="roulette-container">
+            <Roulette 
+              @click="launchWheel" 
+              @wheel-start="wheelStartedCallback" 
+              @wheel-end="wheelEndedCallback" 
+              ref="wheel"
+              :items="adjustedItems" 
+              :size="rouletteSize" 
+              :result-variation="50" 
+              :base-display="true" 
+              :base-background="'#EEAA33'"
+              :reset-on-end="false" 
+              :display-shadow="true" 
+              :duration="5" 
+              :horizontal-content="true" 
+              :counter-clockwise="true"
+              :centered-indicator="true">
+              <template #baseContent>
+                <strong class="roulette-text">Iniciar</strong>
+              </template>
+            </Roulette>
           </div>
         </div>
-      </transition>
-      <transition name="fade-dialog">
-        <div v-if="showDialogInc" class="dialog-overlay">
-          <div class="dialog-card">
-            <h3 class="text-warning mb-3"><i class="bi bi-exclamation-circle"></i> ¡Incidencia ganadora!</h3>
-            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">¿A quién afecta?</label>
-              <select class="form-select" v-model="alumnoSeleccionado">
-                <option selected value="grupo">Afecta a todo el grupo</option>
-                <option v-for="alumno in alumnosGrupo" :key="alumno" :value="alumno">{{ alumno }}</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Comentario</label>
-              <textarea class="form-control" rows="3" v-model="comentario"
-                placeholder="Escribe tu comentario aquí..."></textarea>
-            </div>
-            <div class="d-flex gap-2 justify-content-end">
-              <button class="btn btn-outline-primary" @click="girarAlumnos">
-                <i class="bi bi-person-workspace"></i> Girar alumno
-              </button>
-              <button class="btn btn-outline-success" @click="subirDatos()">
-                <i class="bi bi-check2-circle"></i> Registrar
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition>
-      <transition name="fade-dialog">
-        <div v-if="showDialogGrupo" class="dialog-overlay">
-          <div class="dialog-card">
-            <h3 class="mb-3"><i class="bi bi-people"></i> Selecciona un grupo</h3>
-            <div class="m-3">
-              <select class="form-select" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
-                @change="mostrarError = false">
-                <option selected disabled value="">Selecciona un grupo</option>
-                <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
-              </select>
-              <div class="invalid-feedback" v-if="mostrarError">
-                Por favor elige un grupo.
+        
+        <!-- Diálogos animados -->
+        <transition name="fade-dialog">
+          <div v-if="showDialogCat" class="dialog-overlay">
+            <div class="dialog-card">
+              <h3 class="text-success mb-3 fs-4 fs-md-3">
+                <i class="bi bi-award"></i> ¡Categoría ganadora!
+              </h3>
+              <div class="display-6 fw-bold mb-4 text-break text-center">{{ lastWinner }}</div>
+              <div class="d-flex flex-column gap-2">
+                <button class="btn btn-outline-primary btn-sm" @click="girarIncidencias">
+                  <i class="bi bi-arrow-repeat"></i> Girar incidencias
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" @click="reiniciar(true)">
+                  <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+                </button>
               </div>
             </div>
-            <div class="d-flex gap-2 justify-content-end">
-              <button @click="validarSeleccion" class="btn btn-primary">
-                <i class="bi bi-arrow-right-circle"></i> Elegir categoría
-              </button>
-              <button class="btn btn-outline-secondary" @click="reiniciar(true)">
-                <!-- Reinicia y redirige a localhost -->
-                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
-              </button>
+          </div>
+        </transition>
+        
+        <transition name="fade-dialog">
+          <div v-if="showDialogInc" class="dialog-overlay">
+            <div class="dialog-card">
+              <h3 class="text-warning mb-3 fs-4 fs-md-3">
+                <i class="bi bi-exclamation-circle"></i> ¡Incidencia ganadora!
+              </h3>
+              <div class="display-6 fw-bold mb-4 text-break text-center">{{ lastWinner }}</div>
+              <div class="mb-3">
+                <label class="form-label fw-bold small">¿A quién afecta?</label>
+                <select class="form-select form-select-sm" v-model="alumnoSeleccionado">
+                  <option selected value="grupo">Afecta a todo el grupo</option>
+                  <option v-for="alumno in alumnosGrupo" :key="alumno" :value="alumno">{{ alumno }}</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold small">Comentario</label>
+                <textarea class="form-control form-control-sm" rows="2" v-model="comentario"
+                  placeholder="Escribe tu comentario aquí..."></textarea>
+              </div>
+              <div class="d-flex flex-column gap-2">
+                <button class="btn btn-outline-primary btn-sm" @click="girarAlumnos">
+                  <i class="bi bi-person-workspace"></i> Girar alumno
+                </button>
+                <button class="btn btn-outline-success btn-sm" @click="subirDatos()">
+                  <i class="bi bi-check2-circle"></i> Registrar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </transition>
-      <transition name="fade-dialog">
-        <div v-if="showDialogAlumno" class="dialog-overlay">
-          <div class="dialog-card">
-            <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Alumno afectado!</h3>
-            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
-            <div v-if="ifGruposSeleccionados" class="mb-3">
-              <p><strong>Alumnos seleccionados: </strong>{{ alumnosSeleccionados }}</p>
-              <p><strong>Grupos seleccionados: </strong>{{ gruposSeleccionados }}</p>
-              <p>Insertar como comentario para guardar en DB</p>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Comentario</label>
-              <textarea class="form-control" rows="3" v-model="comentario"
-                placeholder="Escribe tu comentario aquí..."></textarea>
-            </div>
-            <div class="d-flex justify-content-end">
-              <button class="btn btn-outline-primary me-2" @click="girarGrupos">
-                <i class="bi bi-people"></i> Girar grupos
-              </button>
-              <button class="btn btn-outline-success" @click="subirDatos">
-                <i class="bi bi-check2-circle"></i> Registrar
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition>
-      <transition name="fade-dialog">
-        <div v-if="showDialogGrupoRandom" class="dialog-overlay">
-          <div class="dialog-card">
-            <h3 class="text-info mb-3"><i class="bi bi-person-check"></i> ¡Grupo afectado!</h3>
-            <div class="display-6 fw-bold mb-4">{{ lastWinner }}</div>
-            <div class="d-flex justify-content-end">
-              <button class="btn btn-outline-primary me-2" @click="girarAlumnosRandom">
-                <i class="bi bi-person-workspace"></i> Girar alumno
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition>
-      <transition name="fade-dialog">
-        <div v-if="showNoGroupsDialog" class="dialog-overlay">
-          <div class="dialog-card text-center">
-            <h3 class="text-danger mb-3"><i class="bi bi-emoji-frown"></i> ¡Ya no quedan grupos por sortear!</h3>
-            <p class="mb-4">Puedes reiniciar el sorteo o salir.</p>
-            <div class="d-flex justify-content-center gap-3">
-              <button class="btn btn-secondary" @click="salir">
-                <i class="bi bi-box-arrow-left"></i> Salir
-              </button>
-              <button class="btn btn-primary" @click="reiniciarCompletamente">
-                <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition>
-
-    </div>
-    <!-- Columna de la lista -->
-    <div class="col-lg-6">
-      <div class="card shadow-lg border-0 h-100">
-        <div class="card-header bg-primary py-3">
-          <h5 class="mb-0 d-flex align-items-center text-white">
-            <i class="bi bi-list-task me-3 fs-4"></i>
-            Elementos de la Ruleta
-          </h5>
-        </div>
-
-        <div class="card-body p-0">
-          <draggable v-model="items" class="list-group list-group-flush" item-key="id" @end="onDragEnd">
-            <template #item="{ element, index }">
-              <li class="list-group-item d-flex align-items-center px-4 py-3">
-                <div class="d-flex align-items-center flex-grow-1 gap-3">
-                  <button class="btn btn-sm btn-outline-secondary px-2 py-1 rounded-circle"
-                    @click="toggleVisibility(index)">
-                    <i :class="element.hidden ? 'bi-eye-slash' : 'bi-eye'"></i>
-                  </button>
-
-                  <input type="text" class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
-                    v-model="element.htmlContent" @input="updateItem(index, $event.target.value)"
-                    placeholder="Editar elemento">
+        </transition>
+        
+        <transition name="fade-dialog">
+          <div v-if="showDialogGrupo" class="dialog-overlay">
+            <div class="dialog-card">
+              <h3 class="mb-3 fs-4 fs-md-3">
+                <i class="bi bi-people"></i> Selecciona un grupo
+              </h3>
+              <div class="m-3">
+                <select class="form-select" v-model="grupoSeleccionado" :class="{ 'is-invalid': mostrarError }"
+                  @change="mostrarError = false">
+                  <option selected disabled value="">Selecciona un grupo</option>
+                  <option v-for="grupo in grupos" :key="grupo" :value="grupo">{{ grupo }}</option>
+                </select>
+                <div class="invalid-feedback" v-if="mostrarError">
+                  Por favor elige un grupo.
                 </div>
-                <input type="color" v-model="element.background" @input="updateColor(index, $event.target.value)"
-                  class="form-control-color">
-                <span class="badge rounded-pill bg-info bg-opacity-25 text-info">
-                  {{ element.name }}
-                </span>
-              </li>
-            </template>
-          </draggable>
+              </div>
+              <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                <button @click="validarSeleccion" class="btn btn-primary btn-sm btn-md-normal">
+                  <i class="bi bi-arrow-right-circle"></i> Elegir categoría
+                </button>
+                <button class="btn btn-outline-secondary btn-sm btn-md-normal" @click="reiniciar(true)">
+                  <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition>
+        
+        <transition name="fade-dialog">
+          <div v-if="showDialogAlumno" class="dialog-overlay">
+            <div class="dialog-card">
+              <h3 class="text-info mb-3 fs-4 fs-md-3">
+                <i class="bi bi-person-check"></i> ¡Alumno afectado!
+              </h3>
+              <div class="display-6 fw-bold mb-4 text-break">{{ lastWinner }}</div>
+              <div v-if="ifGruposSeleccionados" class="mb-3">
+                <p class="small"><strong>Alumnos seleccionados: </strong>{{ alumnosSeleccionados }}</p>
+                <p class="small"><strong>Grupos seleccionados: </strong>{{ gruposSeleccionados }}</p>
+                <p class="small">Insertar como comentario para guardar en DB</p>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Comentario</label>
+                <textarea class="form-control" rows="3" v-model="comentario"
+                  placeholder="Escribe tu comentario aquí..."></textarea>
+              </div>
+              <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+                <button class="btn btn-outline-primary btn-sm btn-md-normal" @click="girarGrupos">
+                  <i class="bi bi-people"></i> Girar grupos
+                </button>
+                <button class="btn btn-outline-success btn-sm btn-md-normal" @click="subirDatos">
+                  <i class="bi bi-check2-circle"></i> Registrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition>
+        
+        <transition name="fade-dialog">
+          <div v-if="showDialogGrupoRandom" class="dialog-overlay">
+            <div class="dialog-card">
+              <h3 class="text-info mb-3 fs-4 fs-md-3">
+                <i class="bi bi-person-check"></i> ¡Grupo afectado!
+              </h3>
+              <div class="display-6 fw-bold mb-4 text-break">{{ lastWinner }}</div>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-primary btn-sm btn-md-normal" @click="girarAlumnosRandom">
+                  <i class="bi bi-person-workspace"></i> Girar alumno
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition>
+        
+        <transition name="fade-dialog">
+          <div v-if="showNoGroupsDialog" class="dialog-overlay">
+            <div class="dialog-card text-center">
+              <h3 class="text-danger mb-3 fs-4 fs-md-3">
+                <i class="bi bi-emoji-frown"></i> ¡Ya no quedan grupos por sortear!
+              </h3>
+              <p class="mb-4">Puedes reiniciar el sorteo o salir.</p>
+              <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                <button class="btn btn-secondary btn-sm btn-md-normal" @click="salir">
+                  <i class="bi bi-box-arrow-left"></i> Salir
+                </button>
+                <button class="btn btn-primary btn-sm btn-md-normal" @click="reiniciarCompletamente">
+                  <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </div>
+      
+      <!-- Columna de la lista -->
+      <div class="col-12 col-xl-6">
+        <div class="card shadow border-0 h-100">
+          <div class="card-header bg-primary py-2 py-md-3">
+            <h6 class="mb-0 d-flex align-items-center text-white">
+              <i class="bi bi-list-task me-2 fs-6"></i>
+              <span class="d-none d-sm-inline">Elementos de la Ruleta</span>
+              <span class="d-sm-none">Elementos</span>
+            </h6>
+          </div>
+
+          <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+            <draggable v-model="items" class="list-group list-group-flush" item-key="id" @end="onDragEnd">
+              <template #item="{ element, index }">
+                <li class="list-group-item d-flex align-items-center px-2 px-sm-3 py-2">
+                  <div class="d-flex align-items-center flex-grow-1 gap-2">
+                    <button class="btn btn-sm btn-outline-secondary p-1 rounded-circle flex-shrink-0"
+                      @click="toggleVisibility(index)" style="width: 28px; height: 28px;">
+                      <i :class="element.hidden ? 'bi-eye-slash' : 'bi-eye'" style="font-size: 0.75rem;"></i>
+                    </button>
+
+                    <input type="text" 
+                      class="form-control form-control-sm border-0 bg-light rounded-pill px-2 flex-grow-1"
+                      v-model="element.htmlContent" 
+                      @input="updateItem(index, $event.target.value)"
+                      placeholder="Editar elemento"
+                      style="font-size: 0.8rem;">
+                  </div>
+                  
+                  <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                    <input type="color" v-model="element.background" @input="updateColor(index, $event.target.value)"
+                      class="form-control-color border-0 rounded" style="width: 25px; height: 25px;">
+                  </div>
+                </li>
+              </template>
+            </draggable>
+          </div>
         </div>
       </div>
     </div>
@@ -277,8 +315,34 @@ export default {
       }
       return repeatedItems.slice(0, minItems);
     },
+    rouletteSize() {
+      // Tamaño dinámico basado en el ancho de pantalla y espacio disponible
+      if (typeof window !== 'undefined') {
+        const width = window.innerWidth;
+        const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        
+        if (width < 400) return Math.min(250, vw * 0.8); // Muy pequeño
+        if (width < 576) return Math.min(280, vw * 0.75); // xs
+        if (width < 768) return Math.min(320, vw * 0.7); // sm
+        if (width < 992) return Math.min(380, vw * 0.6); // md
+        if (width < 1200) return Math.min(420, vw * 0.5); // lg
+        return 450; // xl y superior
+      }
+      return 280; // valor por defecto más pequeño
+    }
+  },
+  mounted() {
+    // Escuchar cambios en el tamaño de ventana para ajustar la ruleta
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    handleResize() {
+      // Forzar re-renderizado de la ruleta al cambiar el tamaño
+      this.$forceUpdate();
+    },
     launchWheel() {
       this.$refs.wheel.launchWheel();
     },
@@ -513,42 +577,7 @@ export default {
   margin-top: 60px;
 }
 
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.dialog {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 400px;
-}
-
-.dialog-buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-  min-height: 100px;
-}
-
+/* Responsive dialog styles */
 .dialog-overlay {
   position: fixed;
   top: 0;
@@ -561,13 +590,13 @@ textarea {
   align-items: center;
   z-index: 2000;
   animation: fadeInBg 0.4s;
+  padding: 1rem;
 }
 
 @keyframes fadeInBg {
   from {
     background: rgba(0, 0, 0, 0);
   }
-
   to {
     background: rgba(0, 0, 0, 0.45);
   }
@@ -587,10 +616,29 @@ textarea {
   background: #fff;
   border-radius: 1.5rem;
   box-shadow: 0 8px 32px 0 rgba(60, 60, 90, 0.18);
-  padding: 2.5rem 2rem 2rem 2rem;
-  min-width: 340px;
+  padding: 1.5rem;
+  min-width: 280px;
   max-width: 95vw;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
   animation: popIn 0.35s cubic-bezier(.4, 2, .6, 1);
+}
+
+/* Responsive dialog adjustments */
+@media (min-width: 576px) {
+  .dialog-card {
+    padding: 2rem;
+    min-width: 340px;
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 768px) {
+  .dialog-card {
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 600px;
+  }
 }
 
 @keyframes popIn {
@@ -598,7 +646,6 @@ textarea {
     transform: scale(0.85);
     opacity: 0;
   }
-
   to {
     transform: scale(1);
     opacity: 1;
@@ -628,5 +675,65 @@ input[readonly] {
   background-color: #f8f9fa !important;
   color: #6c757d;
   cursor: not-allowed;
+}
+
+/* Responsive text utilities */
+.text-break {
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto;
+}
+
+/* Button size adjustments for mobile */
+.btn-sm.btn-md-normal {
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .btn-sm.btn-md-normal {
+    font-size: 1rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* Mobile-first textarea */
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 80px;
+}
+
+@media (min-width: 576px) {
+  textarea {
+    min-height: 100px;
+  }
+}
+
+/* Responsive form control adjustments */
+@media (max-width: 575.98px) {
+  .form-control-sm {
+    font-size: 0.875rem;
+  }
+  
+  .form-select {
+    font-size: 0.875rem;
+  }
+}
+
+/* Ensure color input is visible on mobile */
+.form-control-color {
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 0.375rem;
+}
+
+@media (max-width: 575.98px) {
+  .form-control-color {
+    min-width: 25px;
+    min-height: 25px;
+  }
 }
 </style>
