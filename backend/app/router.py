@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, current_app, request
 from app.DB.sorteos import subir_sorteo, obtener_sorteos
+from app.DB.estadisticas import obtener_estadisticas
 
 # Crear un Blueprint para las rutas de init
 init_bp = Blueprint('init', __name__)
@@ -37,5 +38,15 @@ def post_sorteos():
         return jsonify({'error': 'Error al subir el sorteo'}), 500
     current_app.logger.info("Sorteo subido correctamente")
     return jsonify({'message': res}), 200
+
+# Ruta para obtener estadísticas
+@init_bp.route('/obtener/estadisticas', methods=['GET'])
+def get_estadisticas():
+    current_app.logger.info("GET request to /obtener/estadisticas")
+    data = obtener_estadisticas()
+    if data is None:
+        return jsonify({'error': 'No se encontraron estadísticas'}), 404
+    current_app.logger.info("Estadísticas obtenidas correctamente")
+    return jsonify(data), 200
     
     
