@@ -70,7 +70,7 @@
                             <td><input v-model="row.Categoria" class="form-control form-control-sm" placeholder="Categoria" /></td>
                             <td><input v-model="row.Incidencia" class="form-control form-control-sm" placeholder="Incidencia" /></td>
                             <td><input v-model="row.Observacion" class="form-control form-control-sm" placeholder="Observación" /></td>
-                            <td>
+                            <td>                            npm install bootstrap-icons@1.13.1
                               <PButton type="button" class="btn btn-sm btn-danger" @click="removeIncidenciaRow(idx)" v-if="incidenciasPreview.length > 1" title="Eliminar fila">
                                 <i class="bi bi-trash"></i>
                               </PButton>
