@@ -46,7 +46,7 @@ main {
 }
 
 /* Scrollbar para Firefox */
-* {
+.app-wrapper {
   scrollbar-width: thin;
   scrollbar-color: #43e97b #e3f2fd;
 }
