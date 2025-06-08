@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 class="mb-3">{{ titulo }}</h5>
-    <div class="grafico-barra-wrapper" v-if="tipo === 'bar'">
+    <div class="BarChartWrapper" v-if="tipo === 'bar'">
       <Bar
         :data="chartData"
         :options="chartOptions"
