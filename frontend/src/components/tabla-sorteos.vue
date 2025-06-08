@@ -264,6 +264,7 @@
 <script>
 import { nextTick } from 'vue';
 import ExcelJS from 'exceljs';
+import { DataTable, Column } from 'primevue/datatable';
 
 export default {
   name: 'TablaSorteos',
@@ -282,11 +283,14 @@ export default {
         mensaje: { value: null, matchMode: 'contains' },
         fecha: { value: [], matchMode: 'between' }
       },
-      loading: false
     };
   },
   created() {
     this.cargarSorteos();
+  },
+  components: {
+    DataTable,
+    Column,
   },
   methods: {
     async cargarSorteos() {
@@ -346,6 +350,7 @@ export default {
     verDetalle(sorteo) {
       this.sorteoSeleccionado = sorteo;
       // Usar Bootstrap modal
+      // eslint-disable-next-line
       const modal = new bootstrap.Modal(this.$refs.modalDetalle);
       modal.show();
     },
