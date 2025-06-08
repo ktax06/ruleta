@@ -1,9 +1,8 @@
 <template>
   <div>
     <h5 class="mb-3">{{ titulo }}</h5>
-    <div class="grafico-barra-wrapper">
+    <div v-if="tipo === 'bar'" class="grafico-barra-wrapper">
       <Bar
-        v-if="tipo === 'bar'"
         :data="chartData"
         :options="chartOptions"
         :plugins="[datalabels]"
@@ -32,7 +31,6 @@
     />
   </div>
 </template>
-
 <script>
 import { Bar, Pie } from 'vue-chartjs'
 import { Chart, BarElement, BarController, CategoryScale, LinearScale, Title, Tooltip, Legend, ArcElement, PieController } from 'chart.js'

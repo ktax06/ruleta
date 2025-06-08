@@ -264,6 +264,8 @@
 <script>
 import { nextTick } from 'vue';
 import ExcelJS from 'exceljs';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 
 export default {
@@ -285,6 +287,10 @@ export default {
       loading: false
     };
   },
+  components: {
+    DataTable,
+    Column
+  },
   created() {
     this.cargarSorteos();
   },
@@ -293,11 +299,6 @@ export default {
       this.loading = true;
       try {
         const res = await fetch('/api/obtener/sorteos');
-        if (!res.ok) {
-          console.error("Error al cargar sorteos:", res.statusText);
-          this.sorteos = [];
-          return;
-        }
         const data = await res.json();
         this.sorteos = data.map(s => ({
           ...s,
@@ -309,13 +310,13 @@ export default {
       } finally {
         this.loading = false;
       }
+      console.log(this.sorteos);
     },
-    
-    formatFecha(fechaStr) {
-      if (!fechaStr) return '';
-      const fecha = new Date(fechaStr);
+    formatFecha(fechaInput) {
+      if (!fechaInput) return '';
+      const fecha = fechaInput instanceof Date ? fechaInput : new Date(fechaInput);
       if (isNaN(fecha.getTime())) {
-          return 'Fecha inválida';
+        return 'Fecha inválida';
       }
       return fecha.toLocaleDateString('es-ES', {
         weekday: 'long',
@@ -325,11 +326,11 @@ export default {
       });
     },
 
-    formatFechaCorta(fechaStr) {
-      if (!fechaStr) return '';
-      const fecha = new Date(fechaStr);
+    formatFechaCorta(fechaInput) {
+      if (!fechaInput) return '';
+      const fecha = fechaInput instanceof Date ? fechaInput : new Date(fechaInput);
       if (isNaN(fecha.getTime())) {
-          return 'Inválida';
+        return 'Inválida';
       }
       return fecha.toLocaleDateString('es-ES', {
         day: '2-digit',
@@ -507,5 +508,23 @@ export default {
   .tabla-sorteos .p-datatable-filter-container .p-calendar {
     font-size: 0.8rem;
   }
+}
+
+/* Forzar modo claro en la tabla */
+.tabla-sorteos,
+.tabla-sorteos .p-datatable-thead > tr > th,
+.tabla-sorteos .p-datatable-tbody > tr > td,
+.tabla-sorteos .p-datatable-wrapper {
+  background: #fff !important;
+  color: #222 !important;
+}
+
+.tabla-sorteos .p-datatable-tbody > tr:hover {
+  background: #e9f7ef !important;
+}
+
+.tabla-sorteos .p-datatable-thead > tr > th {
+  background: #f8fafc !important;
+  color: #222 !important;
 }
 </style>

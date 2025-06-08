@@ -8,7 +8,8 @@ const routes = [
   { path: '/graficos', name: 'Graficos', component: GraficosSorteos},
   { path: '/historial', name: 'Historial', component: HistorialSorteos },
   { path: '/ruleta', name: 'Ruleta', component: RuletePage },
-  { path: '/', name: 'Init', component: InitRulete }
+  { path: '/', name: 'Init', component: InitRulete },
+  { path: '/:pathMatch(.*)*', redirect: '/' }
 ];
 
 const router = createRouter({

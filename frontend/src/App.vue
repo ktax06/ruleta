@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <RuletaHeader />
-    <main class="flex-grow-1">
+    <main class="flex-grow-1 my-5">
       <router-view />
     </main>
     <RuletaFooter />
