@@ -2,27 +2,27 @@
   <div class="container-fluid py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10">
-        <div class="card border-1">
+        <div class="card  border-1">
           <div class="card-header bg-primary text-white d-flex align-items-center">
             <i class="bi bi-gear-fill me-2 fs-3"></i>
             <h2 class="mb-0 flex-grow-1">Inicializar Ruleta</h2>
           </div>
           <div class="card-body p-4">
-            <form @submit.prevent="handleStart" autocomplete="off" class="init-ruleta-form">
+            <form @submit.prevent="handleStart" autocomplete="off">
               <!-- Excel -->
               <div class="mb-4">
                 <label class="form-label fw-bold">
                   <i class="bi bi-file-earmark-excel"></i> Subir Excel con incidencias y alumnos
                 </label>
                 <div class="input-group">
-                  <PButton type="button" severity="primary" @click="triggerFileInput('excelInput')">
+                  <button type="button" class="btn btn-outline-secondary" @click="triggerFileInput('excelInput')">
                     <i class="bi bi-upload"></i> Seleccionar archivo Excel
-                  </PButton>
+                  </button>
                   <input type="text" class="form-control bg-light" :value="excelFile ? excelFile.name : 'No se ha seleccionado ningún archivo'" readonly />
                   <input type="file" accept=".xlsx,.xls" class="form-control d-none" @change="handleExcelChange" ref="excelInput" />
-                  <PButton type="button" severity="success" @click="exportExcel" title="Exportar Excel">
+                  <button type="button" class="btn btn-outline-success ms-2" @click="exportExcel" title="Exportar Excel">
                     <i class="bi bi-download"></i>
-                  </PButton>
+                  </button>
                 </div>
               </div>
               <!-- Incidencias -->
@@ -31,37 +31,38 @@
                   <i class="bi bi-file-earmark-spreadsheet"></i> Subir archivo de incidencias
                 </label>
                 <div class="input-group">
-                  <PButton type="button" severity="primary" @click="triggerFileInput('incidenciasInput')">
+                  <button type="button" class="btn btn-outline-secondary" @click="triggerFileInput('incidenciasInput')">
                     <i class="bi bi-upload"></i> Seleccionar archivo
-                  </PButton>
+                  </button>
                   <input type="text" class="form-control bg-light" :value="files.incidencias ? files.incidencias.name : 'No se ha seleccionado ningún archivo'" readonly />
                   <input type="file" accept=".csv" class="form-control d-none" @change="handleFileChange('incidencias', $event)" ref="incidenciasInput" />
-                  <PButton type="button" severity="success" @click="exportFile('incidencias')" title="Exportar">
+                  <button type="button" class="btn btn-outline-success" @click="exportFile('incidencias')" title="Exportar">
                     <i class="bi bi-download"></i>
-                  </PButton>
+                  </button>
                 </div>
                 <!-- Preview incidencias -->
                 <div class="mt-2">
                   <div class="d-flex justify-content-between align-items-center">
                     <label class="form-label fw-bold mb-0">Vista previa incidencias:</label>
                     <div>
-                      <PButton type="button" size="small" severity="success" outlined class="me-1" @click="addIncidenciaRow" title="Agregar fila">
+                      <button type="button" class="btn btn-sm btn-success me-1" @click="addIncidenciaRow" title="Agregar fila">
                         <i class="bi bi-plus"></i>
-                      </PButton>
-                      <PButton type="button" size="small" severity="info" outlined @click="showIncidenciasPreview = !showIncidenciasPreview">
+                      </button>
+                      <button type="button" class="btn btn-sm btn-outline-primary" @click="showIncidenciasPreview = !showIncidenciasPreview">
                         <i class="bi" :class="showIncidenciasPreview ? 'bi-eye-slash' : 'bi-eye'"></i>
                         {{ showIncidenciasPreview ? 'Ocultar' : 'Mostrar' }}
-                      </PButton>
+                      </button>
                     </div>
                   </div>
                   <transition name="fade">
                     <div v-if="showIncidenciasPreview" class="mt-2">
-                      <table v-if="incidenciasPreview.length" class="table table-bordered table-sm align-middle table-hover">
+                      <table v-if="incidenciasPreview.length" class="table table-bordered table-sm align-middle rounded shadow-sm">
                         <thead class="table-light">
                           <tr>
                             <th>Categoria</th>
                             <th>Incidencia</th>
                             <th>Observacion</th>
+                            <th>Carga</th>
                             <th></th>
                           </tr>
                         </thead>
@@ -70,10 +71,11 @@
                             <td><input v-model="row.Categoria" class="form-control form-control-sm" placeholder="Categoria" /></td>
                             <td><input v-model="row.Incidencia" class="form-control form-control-sm" placeholder="Incidencia" /></td>
                             <td><input v-model="row.Observacion" class="form-control form-control-sm" placeholder="Observación" /></td>
+                            <td><input v-model="row.Carga" class="form-control form-control-sm" placeholder="Carga" /></td>
                             <td>
-                              <PButton type="button" size="small" severity="danger" @click="removeIncidenciaRow(idx)" v-if="incidenciasPreview.length > 1" title="Eliminar fila">
+                              <button type="button" class="btn btn-sm btn-danger" @click="removeIncidenciaRow(idx)" v-if="incidenciasPreview.length > 1" title="Eliminar fila">
                                 <i class="bi bi-trash"></i>
-                              </PButton>
+                              </button>
                             </td>
                           </tr>
                         </tbody>
@@ -89,32 +91,32 @@
                   <i class="bi bi-people"></i> Subir archivo de alumnos
                 </label>
                 <div class="input-group">
-                  <PButton type="button" severity="primary" @click="triggerFileInput('alumnosInput')">
+                  <button type="button" class="btn btn-outline-secondary" @click="triggerFileInput('alumnosInput')">
                     <i class="bi bi-upload"></i> Seleccionar archivo
-                  </PButton>
+                  </button>
                   <input type="text" class="form-control bg-light" :value="files.alumnos ? files.alumnos.name : 'No se ha seleccionado ningún archivo'" readonly />
                   <input type="file" accept=".csv" class="form-control d-none" @change="handleFileChange('alumnos', $event)" ref="alumnosInput" />
-                  <PButton type="button" severity="success" @click="exportFile('alumnos')" title="Exportar">
+                  <button type="button" class="btn btn-outline-success" @click="exportFile('alumnos')" title="Exportar">
                     <i class="bi bi-download"></i>
-                  </PButton>
+                  </button>
                 </div>
                 <!-- Preview alumnos -->
                 <div class="mt-2">
                   <div class="d-flex justify-content-between align-items-center">
                     <label class="form-label fw-bold mb-0">Vista previa alumnos:</label>
                     <div>
-                      <PButton type="button" size="small" severity="success" outlined class="me-1" @click="addAlumnoRow" title="Agregar fila">
+                      <button type="button" class="btn btn-sm btn-success me-1" @click="addAlumnoRow" title="Agregar fila">
                         <i class="bi bi-plus"></i>
-                      </PButton>
-                      <PButton type="button" size="small" severity="info" outlined @click="showAlumnosPreview = !showAlumnosPreview">
+                      </button>
+                      <button type="button" class="btn btn-sm btn-outline-primary" @click="showAlumnosPreview = !showAlumnosPreview">
                         <i class="bi" :class="showAlumnosPreview ? 'bi-eye-slash' : 'bi-eye'"></i>
                         {{ showAlumnosPreview ? 'Ocultar' : 'Mostrar' }}
-                      </PButton>
+                      </button>
                     </div>
                   </div>
                   <transition name="fade">
                     <div v-if="showAlumnosPreview" class="mt-2">
-                      <table v-if="alumnosPreview.length" class="table table-bordered table-sm align-middle table-hover">
+                      <table v-if="alumnosPreview.length" class="table table-bordered table-sm align-middle rounded shadow-sm">
                         <thead class="table-light">
                           <tr>
                             <th>Grupo</th>
@@ -127,9 +129,9 @@
                             <td><input v-model="row.Grupo" class="form-control form-control-sm" placeholder="Grupo" /></td>
                             <td><input v-model="row.Integrante" class="form-control form-control-sm" placeholder="Integrante" /></td>
                             <td>
-                              <PButton type="button" size="small" severity="danger" @click="removeAlumnoRow(idx)" v-if="alumnosPreview.length > 1" title="Eliminar fila">
+                              <button type="button" class="btn btn-sm btn-danger" @click="removeAlumnoRow(idx)" v-if="alumnosPreview.length > 1" title="Eliminar fila">
                                 <i class="bi bi-trash"></i>
-                              </PButton>
+                              </button>
                             </td>
                           </tr>
                         </tbody>
@@ -175,6 +177,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
