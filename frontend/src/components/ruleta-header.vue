@@ -7,14 +7,14 @@
         <span class="h5 mb-0 fw-bold text-white">Ruleta de Sorteos</span>
       </div>
       <!-- Menú hamburguesa en mobile -->
-      <button
+      <PButton
         class="btn btn-outline-light d-md-none"
         type="button"
         @click="showMenu = !showMenu"
         aria-label="Abrir menú"
       >
         <i class="bi bi-list fs-3"></i>
-      </button>
+      </PButton>
       <!-- Navegación principal (desktop) -->
       <ul class="nav gap-2 flex-nowrap align-items-center mb-2 mb-md-0 d-none d-md-flex">
         <li class="nav-item">
