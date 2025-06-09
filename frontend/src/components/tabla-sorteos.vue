@@ -270,6 +270,7 @@ import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Tooltip from 'primevue/tooltip';
+import * as bootstrap from 'bootstrap';
 
 export default {
   name: 'TablaSorteos',
