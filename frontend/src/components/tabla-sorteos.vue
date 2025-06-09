@@ -264,7 +264,12 @@
 <script>
 import { nextTick } from 'vue';
 import ExcelJS from 'exceljs';
-import { DataTable, Column } from 'primevue/datatable';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import InputText from 'primevue/inputtext';
+import Calendar from 'primevue/calendar';
+import Button from 'primevue/button';
+import Tooltip from 'primevue/tooltip';
 
 export default {
   name: 'TablaSorteos',
@@ -291,6 +296,12 @@ export default {
   components: {
     DataTable,
     Column,
+    InputText,
+    Calendar,
+    PButton: Button,
+  },
+  directives: {
+    tooltip: Tooltip,
   },
   methods: {
     async cargarSorteos() {
