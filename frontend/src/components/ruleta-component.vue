@@ -36,7 +36,7 @@
                 <i class="bi bi-award"></i> ¡Categoría ganadora!
               </h3>
               <div class="display-6 fw-bold mb-4 text-break text-center">{{ lastWinner }}</div>
-              <div class="d-flex flex-column gap-2">
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
                 <button class="btn btn-outline-primary btn-sm" @click="girarIncidencias">
                   <i class="bi bi-arrow-repeat"></i> Girar incidencias
                 </button>
@@ -47,7 +47,8 @@
             </div>
           </div>
         </transition>
-        
+
+        <!-- Diálogo de incidencia -->
         <transition name="fade-dialog">
           <div v-if="showDialogInc" class="dialog-overlay">
             <div class="dialog-card">
@@ -67,18 +68,19 @@
                 <textarea class="form-control form-control-sm" rows="2" v-model="comentario"
                   placeholder="Escribe tu comentario aquí..."></textarea>
               </div>
-              <div class="d-flex flex-column gap-2">
-                <button class="btn btn-outline-primary btn-sm" @click="girarAlumnos">
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                <button class="btn btn-outline-primary" @click="girarAlumnos">
                   <i class="bi bi-person-workspace"></i> Girar alumno
                 </button>
-                <button class="btn btn-outline-success btn-sm" @click="subirDatos()">
+                <button class="btn btn-outline-success" @click="subirDatos()">
                   <i class="bi bi-check2-circle"></i> Registrar
                 </button>
               </div>
             </div>
           </div>
         </transition>
-        
+
+        <!-- Diálogo de grupo -->
         <transition name="fade-dialog">
           <div v-if="showDialogGrupo" class="dialog-overlay">
             <div class="dialog-card">
@@ -95,18 +97,19 @@
                   Por favor elige un grupo.
                 </div>
               </div>
-              <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
-                <button @click="validarSeleccion" class="btn btn-primary btn-sm btn-md-normal">
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                <button @click="validarSeleccion" class="btn btn-primary">
                   <i class="bi bi-arrow-right-circle"></i> Elegir categoría
                 </button>
-                <button class="btn btn-outline-secondary btn-sm btn-md-normal" @click="reiniciar(true)">
+                <button class="btn btn-outline-secondary" @click="reiniciar(true)">
                   <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
                 </button>
               </div>
             </div>
           </div>
         </transition>
-        
+
+        <!-- Diálogo de alumno -->
         <transition name="fade-dialog">
           <div v-if="showDialogAlumno" class="dialog-overlay">
             <div class="dialog-card">
@@ -124,18 +127,19 @@
                 <textarea class="form-control" rows="3" v-model="comentario"
                   placeholder="Escribe tu comentario aquí..."></textarea>
               </div>
-              <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
-                <button class="btn btn-outline-primary btn-sm btn-md-normal" @click="girarGrupos">
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                <button class="btn btn-outline-primary" @click="girarGrupos">
                   <i class="bi bi-people"></i> Girar grupos
                 </button>
-                <button class="btn btn-outline-success btn-sm btn-md-normal" @click="subirDatos">
+                <button class="btn btn-outline-success" @click="subirDatos">
                   <i class="bi bi-check2-circle"></i> Registrar
                 </button>
               </div>
             </div>
           </div>
         </transition>
-        
+
+        <!-- Diálogo de grupo aleatorio -->
         <transition name="fade-dialog">
           <div v-if="showDialogGrupoRandom" class="dialog-overlay">
             <div class="dialog-card">
@@ -144,14 +148,15 @@
               </h3>
               <div class="display-6 fw-bold mb-4 text-break">{{ lastWinner }}</div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-outline-primary btn-sm btn-md-normal" @click="girarAlumnosRandom">
+                <button class="btn btn-outline-primary" @click="girarAlumnosRandom">
                   <i class="bi bi-person-workspace"></i> Girar alumno
                 </button>
               </div>
             </div>
           </div>
         </transition>
-        
+
+        <!-- Diálogo de no hay grupos -->
         <transition name="fade-dialog">
           <div v-if="showNoGroupsDialog" class="dialog-overlay">
             <div class="dialog-card text-center">
@@ -159,17 +164,18 @@
                 <i class="bi bi-emoji-frown"></i> ¡Ya no quedan grupos por sortear!
               </h3>
               <p class="mb-4">Puedes reiniciar el sorteo o salir.</p>
-              <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                <button class="btn btn-secondary btn-sm btn-md-normal" @click="salir">
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-3">
+                <button class="btn btn-secondary" @click="salir">
                   <i class="bi bi-box-arrow-left"></i> Salir
                 </button>
-                <button class="btn btn-primary btn-sm btn-md-normal" @click="reiniciarCompletamente">
+                <button class="btn btn-primary" @click="reiniciarCompletamente">
                   <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
                 </button>
               </div>
             </div>
           </div>
         </transition>
+
       </div>
       
       <!-- Columna de la lista -->
