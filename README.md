@@ -14,26 +14,37 @@ Ruleta 2.0 es un proyecto que consiste en una implementación web mejorada de la
 - pip
 - pipenv
 - node
+- Docker Hub
 ## Como correr el proyecto
-Se asumira que se tiene acceso al repositorio y github cli para la ejecución
-de este item.
+Se asumira que el repositorio será publico y la ejecucion del proyecto se realizará en un entorno Linux. Para correr el proyecto, sigue los siguientes pasos:
 1. Clonar el repositorio:
 ```bash
-gh repo clone ktax06/ruleta
+git clone https://github.com/ktax06/ruleta.git   
 ```
 2. Entrar al directorio del proyecto:
 ```bash
 cd ruleta
 ```
-3. Correr
+3. Copiar env.template a .env, opcionalmente cambiar claves y usuarios:
+```bash
+cp env.template .env
+```
+4. Login en Docker Hub:
+```bash
+docker login
+```
+   - Ingresar usuario y contraseña de Docker Hub.
+   - Si no tienes cuenta, puedes crear una en [Docker Hub](https://hub.docker.com/).
+
+4. Correr
 ```bash
 docker-compose up -d --build
 ```
-4. para detener usar:
+5. para detener usar:
 ```bash
 docker-compose down --remove-orphans
 ```
-5. para recompilar la imagen (Linux):
+6. para recompilar la imagen (Linux):
 ```bash
 docker-compose down --remove-orphans && docker-compose up -d --build
 ```
